@@ -15,6 +15,8 @@ function sanitized(input) {
   const secrets = new Set(), seen = new Set(), seenSensitive = new Set();
   const secretKey = (key,value) => {
     const k = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (['inputtokens','outputtokens','totaltokens'].includes(k)
+      && (value === null || (Number.isSafeInteger(value) && value >= 0))) return false;
     const hash=k.endsWith('hash')&&typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
     return !hash && /token|password|secret|credential|authorization|apikey/.test(k);
   };
@@ -103,6 +105,23 @@ export function buildReceipt(input={}) {
   }
 
   const predicates=[],rows=new Map(),policies=[];
+  const modelCalls=[];
+  if(Array.isArray(args.model_calls)) for(const c of args.model_calls) {
+    if(!object(c)) {predicates.push(item('Model call','not_certified',unknown,{reason:'Invalid model-call record'}));continue;}
+    const call={run_id:c.run_id??unknown,role:c.role??unknown,model:c.model??unknown,mode:c.mode??unknown,
+      status:c.status??unknown,request_hash:c.request_hash??null,response_hash:c.response_hash??null,
+      latency_ms:amount(c.latency_ms)?c.latency_ms:null,
+      usage:{input_tokens:c.usage?.input_tokens??null,output_tokens:c.usage?.output_tokens??null,
+        total_tokens:c.usage?.total_tokens??null,source:c.usage?.source??unknown},
+      request_attempted:c.request_attempted===true};
+    if(c.error_code!==undefined)call.error_code=c.error_code;
+    modelCalls.push(call);
+    const supported=c.status==='success'&&c.mode==='live'&&c.request_attempted===true
+      &&typeof c.model==='string'&&/^muse-spark-1\.[123]$/.test(c.model)
+      &&[c.request_hash,c.response_hash].every(h=>typeof h==='string'&&/^[a-f0-9]{64}$/.test(h));
+    predicates.push(item('Model call',c.status==='refused'?'failed':supported?'verified':'not_certified',call,
+      {source:'model adapter metadata',reason:c.mode==='mock'?'Mock fixture; not real Meta use':'Provider call record; model does not decide policy'}));
+  }
   if(object(args.checks)) policies.push({source:'checks argument',policy:args.checks});
   if(object(s.policy)) policies.push({source:'snapshot.policy',policy:s.policy});
   if(Array.isArray(s.events)) for(const e of s.events) {
@@ -187,7 +206,7 @@ export function buildReceipt(input={}) {
     FAILED_NOT_SENT:'소유자가 미발송 근거와 영수증을 검토한다',EXECUTED:'소유자가 결과와 영수증 봉인 여부를 검토한다',
     RECEIPTED:'소유자가 영수증과 봉인 상태를 확인한다',REPLAYABLE:'소유자가 영수증 검토 및 다음 런 여부를 결정한다',
   };
-  return freeze({runId:text(s.run_id)?s.run_id:unknown,state,
+  return freeze({runId:text(s.run_id)?s.run_id:unknown,state,model_calls:modelCalls,
     boundInputs:panel(labels.boundInputs,boundItems),predicates:panel(labels.predicates,predicates),
     nonActions:panel(labels.nonActions,nonActions),nextGate:panel(labels.nextGate,[
       item('STOP','held',issues.length?'소유자가 불완전·불일치 입력부터 확인한다':next[state]??'소유자가 유효한 런 기록을 제공한다',

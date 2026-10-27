@@ -213,9 +213,9 @@ function evaluateAt(input, phase, context) {
     }
     const applicable = new Set(checks.map((c) => c.rule));
     if (!external) applicable.add('R-06');
-    const primary = context.focusRule ?? (isolation.ignored ? 'R-07' : external
+    const primary = context.primaryUnderTest ?? (isolation.ignored ? 'R-07' : external
       ? phase === 'execution' ? 'R-04' : 'R-02' : 'R-06');
-    if (!applicable.has(primary)) return result('HELD', null, 'focusRule not checked in this phase', checks, extra);
+    if (!applicable.has(primary)) return result('HELD', null, 'primaryUnderTest not checked in this phase', checks, extra);
     return result('PASS', primary, 'All applicable deterministic predicates passed', checks, extra);
   } catch (error) {
     return result('HELD', null, `Invalid policy input: ${error.message}`);
