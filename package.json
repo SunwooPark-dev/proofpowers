@@ -1,1 +1,1 @@
-{"description":"ProofPowers — Block anything irreversible. Day 1 environment skeleton only.","name":"proofpowers","private":true,"scripts":{"smoke":"node scripts/smoke.mjs"},"type":"module","version":"0.1.0"}
+{"description":"ProofPowers — Block anything irreversible. Day 1 environment skeleton only.","name":"proofpowers","private":true,"scripts":{"cases":"node src/cases/run.mjs","smoke":"node scripts/smoke.mjs"},"type":"module","version":"0.1.0"}
