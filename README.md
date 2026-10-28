@@ -1,4 +1,4 @@
-# ProofPowers — Block anything irreversible.
+# ProofPowers — Block anything irreversible. Benefit all humanity — but first, do no harm.
 
 Replay any run. Prove any approval. Block anything irreversible.
 
@@ -35,3 +35,4 @@ The standard runner/smoke wire route events into Controller audit logs. External
 
 Day 5: demo three cuts PASS/HOLD/BLOCK verified in mock; live forced-failure fallback proven (HELD/R-08, Spark $0.0046 estimate); normal live PASS not verified — budget reservation guard refused before network (see Day 5 evidence).
 Day 5b: 4xx no-usage reservations settle to $0 by owner policy (5xx/timeout/malformed retain); normal live PASS verified on the new tree (3/3, 2,810 tokens, $0.0294 estimate); smoke budget default is now $0.15.
+Live 12/12 (Muse Wonder + Spark): full fixed-12 suite verified live, 36/36 HTTP 200, 30,007 tokens, $0.3144 estimate.

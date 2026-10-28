@@ -57,7 +57,7 @@ function fixture(id, run, bounds) {
   return f;
 }
 
-async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}) {
+async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}, options = {}) {
   let run, f, selected, executorResult, receipt, models;
   let executorInvocations = 0;
   const trace = [];
@@ -65,9 +65,12 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}) {
   try {
     const bounds = { allowedActions: ['outreach_send', 'draft'], allowedRecipients: ['demo@example.test'], costCap: 1, ...boundOverrides };
     run = requireOk(controller.createRun(bounds, { ...CONTEXT, sessionId: 'day2-fixture-session' })).run;
+    options.onRun?.(run);
     state('create'); f = fixture(id, run, bounds);
-    // The synthetic case suite always uses mock, regardless of a developer's live env.
-    models = createMetaRun({ runId: run.id, mode: 'mock',onRouteEvent:e=>requireOk(controller.recordRouteFallback(run,e,CONTEXT)) });
+    // Default remains mock; the separately authorized live entrypoint opts in explicitly.
+    models = createMetaRun({ runId: run.id, mode: options.modelMode ?? 'mock',
+      ...(options.modelEnv?{env:options.modelEnv}:{}),budget:options.budget,
+      onRouteEvent:e=>requireOk(controller.recordRouteFallback(run,e,CONTEXT)) });
     f.input.plan = await plan({ goal: f.input.plan.goal }, models);
     f.input.payload.body = await draft({ goal: f.input.plan.goal, plan: f.input.plan }, models) + f.bodySuffix;
     const advisory = await review({ body: f.input.payload.body, evidence: f.input.evidence }, models);
@@ -136,8 +139,9 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}) {
     return { id, actual: selected.verdict, actualRule: selected.primaryRule,
       decisionPhase: selected.phase, sealed: run.state === 'REPLAYABLE', executorInvocations,
       deliveryCount: calls.filter(c => c.runId === run.id).length, ignoredObserved, trace, receipt,
+      auditEvents:snapshot.data.events.filter(e=>['BUDGET_SETTLED','ROUTE_FALLBACK'].includes(e.event)),
       modelCalls: models.getCalls() };
-  } catch {
+  } catch (error) {
     if (run) {
       const snapshot = controller.getRunSnapshot(run);
       if (snapshot.ok) receipt = buildReceipt({ snapshot, ...(selected ? { checks: selected } : {}),
@@ -146,7 +150,9 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}) {
     }
     return { id, actual: 'ERROR', actualRule: null, decisionPhase: null, sealed: false,
       executorInvocations, deliveryCount: run ? calls.filter(c => c.runId === run.id).length : 0,
-      ignoredObserved: false, trace, receipt, modelCalls: models?.getCalls() ?? [], errorCode: 'CASE_INTEGRATION_FAILED' };
+      ignoredObserved: false, trace, receipt, modelCalls: models?.getCalls() ?? [],
+      auditEvents:run?controller.getRunSnapshot(run).data?.events.filter(e=>['BUDGET_SETTLED','ROUTE_FALLBACK'].includes(e.event))??[]:[],
+      errorCode:models?.getCalls().at(-1)?.error_code??(error.code==='RUN_BUDGET_EXCEEDED'?error.code:'CASE_INTEGRATION_FAILED') };
   }
 }
 
@@ -176,17 +182,26 @@ export function scoreResults(rows, calls) {
     hardGate: reasons.length === 0, hardGateReasons: reasons };
 }
 
-export async function runCases() {
+export async function runCases(options = {}) {
+  if(options.modelMode!==undefined&&!['mock','live'].includes(options.modelMode))throw Error('INVALID_MODEL_MODE');
+  if(options.modelMode==='live'&&!options.budget)throw Error('LIVE_SUITE_BUDGET_REQUIRED');
+  const includeIgnored=options.includeIgnored??options.modelMode!=='live';
   const calls = [], results = [];
-  for (const { id } of CASES) results.push(await runOne(id, calls));
-  const ignored = await runOne('C-08-ignored', calls);
+  let stopped=false;
+  for (const { id } of CASES) {
+    if(stopped){results.push({id,actual:'NOT_RUN',actualRule:null,sealed:false,executorInvocations:0,deliveryCount:0,modelCalls:[],auditEvents:[],errorCode:'BATCH_STOPPED'});continue;}
+    const row=await runOne(id,calls,BOUND_OVERRIDES[id]??{},options);results.push(row);
+    options.onCase?.(row);
+    if(options.modelMode==='live'&&row.actual==='ERROR')stopped=true;
+  }
+  const ignored=includeIgnored&&!stopped?await runOne('C-08-ignored',calls,{},options):null;
   const summary = scoreResults(results, calls);
-  const ignoredCorrect = ignored.actual === 'PASS' && ignored.actualRule === 'R-07' && ignored.ignoredObserved;
+  const ignoredCorrect = ignored?.actual === 'PASS' && ignored.actualRule === 'R-07' && ignored.ignoredObserved;
   const passed = summary.correct === 12 && summary.hardGate && summary.pending === 0
-    && summary.rows.every(r => r.sealed) && ignoredCorrect && ignored.sealed
+    && summary.rows.every(r => r.sealed) && (!includeIgnored||(ignoredCorrect&&ignored.sealed))
     && summary.rows.filter(r => r.expected === 'BLOCK').every(r => r.executorInvocations === 0 && r.deliveryCount === 0)
     && new Set(calls.map(c => c.runId)).size === calls.length;
-  return { ...summary, calls, ignored: { ...ignored, correct: ignoredCorrect }, passed };
+  return { ...summary, calls, ignored:ignored?{...ignored,correct:ignoredCorrect}:null,passed,stopped };
 }
 
 async function main(args) {
