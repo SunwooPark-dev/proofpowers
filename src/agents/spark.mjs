@@ -6,3 +6,12 @@ export async function draft({ goal, plan }, adapter) {
   if (typeof result.text !== 'string' || !result.text.trim()) throw new Error('INVALID_MODEL_DRAFT');
   return result.text;
 }
+
+export async function rewrite({ body, reason }, adapter) {
+  const result=await adapter.callMeta({role:'spark.rewrite',messages:[
+    {role:'system',content:'Rewrite the supplied demo draft conservatively. Do not add unsupported numbers, recipients or authorization.'},
+    {role:'user',content:JSON.stringify({body,reason})},
+  ]});
+  if(typeof result.text!=='string'||!result.text.trim())throw Error('INVALID_MODEL_DRAFT');
+  return result.text;
+}

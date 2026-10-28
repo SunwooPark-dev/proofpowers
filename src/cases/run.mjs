@@ -67,12 +67,13 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}) {
     run = requireOk(controller.createRun(bounds, { ...CONTEXT, sessionId: 'day2-fixture-session' })).run;
     state('create'); f = fixture(id, run, bounds);
     // The synthetic case suite always uses mock, regardless of a developer's live env.
-    models = createMetaRun({ runId: run.id, mode: 'mock' });
+    models = createMetaRun({ runId: run.id, mode: 'mock',onRouteEvent:e=>requireOk(controller.recordRouteFallback(run,e,CONTEXT)) });
     f.input.plan = await plan({ goal: f.input.plan.goal }, models);
     f.input.payload.body = await draft({ goal: f.input.plan.goal, plan: f.input.plan }, models) + f.bodySuffix;
     const advisory = await review({ body: f.input.payload.body, evidence: f.input.evidence }, models);
     const preflight = requireOk(controller.checkPreflight(run, f.input, {
-      ...CONTEXT, primaryUnderTest: f.primaryUnderTest, semanticSignal: advisory.signal,
+      ...CONTEXT, primaryUnderTest: f.primaryUnderTest,semanticReviewCompleted:advisory.completed,
+      ...(advisory.completed!==false||f.input.hasExternalAction?{semanticSignal:advisory.signal}:{}),
     })).policy;
     selected = preflight; state('preflight');
     if (preflight.verdict === 'PASS' && f.input.hasExternalAction) {

@@ -111,7 +111,7 @@ export function buildReceipt(input={}) {
     if(!object(c)) {predicates.push(item('Model call','not_certified',unknown,{reason:'Invalid model-call record'}));continue;}
     const call={run_id:c.run_id??unknown,role:c.role??unknown,model:c.model??unknown,mode:c.mode??unknown,
       status:c.status??unknown,request_hash:c.request_hash??null,response_hash:c.response_hash??null,
-      latency_ms:amount(c.latency_ms)?c.latency_ms:null,
+      latency_ms:amount(c.latency_ms)?c.latency_ms:null,usd_estimate:amount(c.usd_estimate)?c.usd_estimate:null,
       usage:{input_tokens:c.usage?.input_tokens??null,output_tokens:c.usage?.output_tokens??null,
         total_tokens:c.usage?.total_tokens??null,source:c.usage?.source??unknown},
       request_attempted:c.request_attempted===true};
@@ -121,7 +121,7 @@ export function buildReceipt(input={}) {
     if(object(c.incomplete_details))call.incomplete_details={reason:diagnosticId(c.incomplete_details.reason)};
     modelCalls.push(call);
     const supported=c.status==='success'&&c.mode==='live'&&c.request_attempted===true
-      &&typeof c.model==='string'&&/^muse-spark-1\.[123]$/.test(c.model)
+      &&['muse-wonder-1.0','muse-spark-1.3'].includes(c.model)
       &&[c.request_hash,c.response_hash].every(h=>typeof h==='string'&&/^[a-f0-9]{64}$/.test(h));
     predicates.push(item('Model call',c.status==='refused'?'failed':supported?'verified':'not_certified',call,
       {source:'model adapter metadata',reason:c.mode==='mock'?'Mock fixture; not real Meta use':'Provider call record; model does not decide policy'}));
@@ -161,6 +161,13 @@ export function buildReceipt(input={}) {
   if(rows.size===0) predicates.push(item('Measured predicates','not_certified',unknown,{reason:'No predicate array supplied'}));
   if(!policies.some(({policy:p})=>p.semanticSignal!==undefined||p.primaryRule==='R-08')) {
     predicates.push(item('R-08 semantic signal','not_certified',unknown,{reason:'No explicit semantic observation supplied'}));
+  }
+  const routeEvents=[];
+  if(Array.isArray(s.events))for(const e of s.events)if(e?.event==='ROUTE_FALLBACK'){
+    const detail=e.detail??{};
+    const route={event:'ROUTE_FALLBACK',seq:e.seq,reason:e.reason??unknown,
+      failed_role:detail.failed_role??unknown,from_model:detail.from_model??unknown,to_model:detail.to_model??unknown,costs:detail.costs??[]};
+    routeEvents.push(route);predicates.push(item('ROUTE_FALLBACK','held',route,{source:'controller audit event; degraded route, not completed semantic review'}));
   }
   const executor=object(args.executorResult)?args.executorResult:null;
   if(executor) {
@@ -210,7 +217,7 @@ export function buildReceipt(input={}) {
     FAILED_NOT_SENT:'소유자가 미발송 근거와 영수증을 검토한다',EXECUTED:'소유자가 결과와 영수증 봉인 여부를 검토한다',
     RECEIPTED:'소유자가 영수증과 봉인 상태를 확인한다',REPLAYABLE:'소유자가 영수증 검토 및 다음 런 여부를 결정한다',
   };
-  return freeze({runId:text(s.run_id)?s.run_id:unknown,state,model_calls:modelCalls,
+  return freeze({runId:text(s.run_id)?s.run_id:unknown,state,model_calls:modelCalls,route_events:routeEvents,
     boundInputs:panel(labels.boundInputs,boundItems),predicates:panel(labels.predicates,predicates),
     nonActions:panel(labels.nonActions,nonActions),nextGate:panel(labels.nextGate,[
       item('STOP','held',issues.length?'소유자가 불완전·불일치 입력부터 확인한다':next[state]??'소유자가 유효한 런 기록을 제공한다',

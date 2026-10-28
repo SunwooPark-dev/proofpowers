@@ -1,20 +1,106 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createMetaRun, responseModelMatches } from '../src/model/meta.mjs';
+import { createMetaRun, responseModelMatches, ROLE_MODELS } from '../src/model/meta.mjs';
 import { plan, review } from '../src/agents/wonder.mjs';
-import { draft } from '../src/agents/spark.mjs';
+import { draft, rewrite } from '../src/agents/spark.mjs';
 import { runCases } from '../src/cases/run.mjs';
 import { buildReceipt, renderText } from '../src/board/board.mjs';
 import { evaluatePreflight } from '../src/policy/engine.mjs';
 import { CASES } from '../src/cases/cases.mjs';
+import { estimateUsd,summarizeCosts } from '../src/model/costs.mjs';
+import * as controller from '../src/run/controller.mjs';
+import { hashPayload } from '../src/policy/engine.mjs';
 
 const request={role:'spark.draft',messages:[{role:'user',content:'Draft an introduction'}]};
-test('response model accepts exact or requested-dash suffix and rejects other names',()=>{
+test('response model requires exact ID and rejects prefixes and other models',()=>{
   assert.equal(responseModelMatches('muse-spark-1.3','muse-spark-1.3'),true);
-  assert.equal(responseModelMatches('muse-spark-1.3','muse-spark-1.3-20261027'),true);
+  assert.equal(responseModelMatches('muse-spark-1.3','muse-spark-1.3-20261027'),false);
+  assert.equal(responseModelMatches('muse-wonder-1.0','muse-wonder-1.0'),true);
+  assert.equal(responseModelMatches('muse-wonder-1.0','muse-wonder-1.0-20261027'),false);
   for(const name of ['muse-spark-1.30','muse-spark-1.3evil','muse-spark-1.2','llama',null,42])
     assert.equal(responseModelMatches('muse-spark-1.3',name),false);
   assert.equal(responseModelMatches('', '-anything'),false);
+});
+
+test('four roles use frozen model constants; META_MODEL override is never read',async()=>{
+  const mapping={'wonder.plan':'muse-wonder-1.0','wonder.review':'muse-wonder-1.0','spark.draft':'muse-spark-1.3','spark.rewrite':'muse-spark-1.3'};
+  assert.deepEqual(ROLE_MODELS,mapping);assert.throws(()=>{ROLE_MODELS['wonder.plan']='other';});
+  let network=0,reads=0;const old=globalThis.fetch;globalThis.fetch=async()=>{network++;throw Error('NO_NETWORK');};
+  try{
+    const a=createMetaRun({mode:'mock',env:{get META_MODEL(){reads++;throw Error('OVERRIDE_READ');},get META_API_KEY(){throw Error('KEY_READ');}}});
+    for(const [role,model] of Object.entries(mapping))assert.equal((await a.callMeta({...request,role})).model,model);
+    for(const role of ['spark.plan','wonder.draft','toString','unknown'])await assert.rejects(a.callMeta({...request,role}),/INVALID_MODEL_REQUEST/);
+    assert.equal(reads,0);assert.equal(network,0);assert(a.getCalls().every(c=>!c.request_attempted));
+    assert.equal((await createMetaRun({mode:'mock',env:{META_MODEL:'llama-override'}}).callMeta(request)).model,'muse-spark-1.3');
+  }finally{globalThis.fetch=old;}
+});
+
+test('owner rate table produces model-specific USD estimates and unknown usage stays null',()=>{
+  assert.equal(estimateUsd('muse-wonder-1.0',{input_tokens:1_000_000,output_tokens:1_000_000}),24);
+  assert.equal(estimateUsd('muse-spark-1.3',{input_tokens:1_000_000,output_tokens:1_000_000}),5.5);
+  assert.equal(estimateUsd('muse-wonder-1.0',{input_tokens:1000,output_tokens:2000}),0.044);
+  assert.equal(estimateUsd('muse-spark-1.3',{input_tokens:1000,output_tokens:2000}),0.00975);
+  for(const u of [null,{input_tokens:-1,output_tokens:1},{input_tokens:'1',output_tokens:1}])assert.equal(estimateUsd('muse-spark-1.3',u),null);
+  assert.equal(estimateUsd('toString',{input_tokens:1,output_tokens:1}),null);
+  const calls=[{model:'muse-spark-1.3',usage:{input_tokens:1000,output_tokens:2000}},{model:'muse-spark-1.3',usage:{input_tokens:1000,output_tokens:2000}}];
+  assert.equal(summarizeCosts(calls)[0].usd_estimate,0.0195);
+  assert.equal(summarizeCosts([...calls,{model:'muse-spark-1.3',usage:null}])[0].usd_estimate,null);
+  const r=buildReceipt({model_calls:[{role:'wonder.plan',model:'muse-wonder-1.0',mode:'mock',status:'success',usage:{input_tokens:1000,output_tokens:2000},usd_estimate:0.044}]});
+  assert.equal(r.model_calls[0].usd_estimate,0.044);assert(renderText(r).includes('"usd_estimate":0.044'));
+});
+
+function fallbackFixture(external,failedRole){
+  const bounds={allowedActions:['draft','outreach_send'],allowedRecipients:['demo@example.test'],costCap:1};
+  const created=controller.createRun(bounds);assert(created.ok);const run=created.run;
+  const adapter=createMetaRun({runId:run.id,mode:'mock',mockFailures:[failedRole],onRouteEvent:e=>{
+    const r=controller.recordRouteFallback(run,e);assert.equal(r.ok,true);
+  }});
+  const payload=external?{run_id:run.id,action_type:'outreach_send',recipient:'demo@example.test',subject:'Demo',body:'',attachments:[],bound_inputs_hash:hashPayload(bounds)}:{action_type:'draft',body:''};
+  return {run,adapter,input:{payload,evidence:[],hasExternalAction:external,costAccumulated:0,costEstimate:0}};
+}
+
+test('Wonder planning failure logs ROUTE_FALLBACK; Spark-only external run stays HOLD',async()=>{
+  const x=fallbackFixture(true,'wonder.plan');
+  x.input.plan=await plan({goal:'Prepare demo outreach'},x.adapter);
+  x.input.payload.body=await draft({goal:x.input.plan.goal,plan:x.input.plan},x.adapter);
+  assert.equal(await rewrite({body:x.input.payload.body,reason:'Conservative draft'},x.adapter),'A useful service.');
+  const advice=await review({body:x.input.payload.body},x.adapter);assert.equal(advice.completed,false);
+  assert.equal(x.adapter.isSparkOnly(),true);assert.equal(x.adapter.getRouteEvents().length,1);
+  assert.deepEqual(x.adapter.getCalls().map(c=>c.role),['wonder.plan','spark.draft','spark.rewrite']);
+  const checked=controller.checkPreflight(x.run,x.input,{semanticReviewCompleted:false,semanticSignal:'clear'});
+  assert.equal(checked.state,'HELD');assert.equal(checked.policy.primaryRule,'R-08');
+  assert.equal(controller.approve(x.run,{}).error.code,'R08_REVIEW_INCOMPLETE');
+  assert.equal(controller.beginDispatch(x.run,{}).error.code,'R08_REVIEW_INCOMPLETE');assert.equal(x.run.state,'HELD');
+  assert.equal(controller.recheckHeld(x.run,{semanticSignal:'clear'}).state,'HELD');
+  assert.equal(controller.approve(x.run,{}).error.code,'R08_REVIEW_INCOMPLETE');
+  const snapshot=controller.getRunSnapshot(x.run);assert(snapshot.data.events.some(e=>e.event==='ROUTE_FALLBACK'));
+  const r=buildReceipt({snapshot,checks:checked.policy,model_calls:x.adapter.getCalls()});
+  assert.equal(r.route_events.length,1);assert(renderText(r).includes('ROUTE_FALLBACK'));
+  assert(r.model_calls.every(c=>Object.hasOwn(c,'usd_estimate')&&c.usd_estimate===null));
+  assert.equal(r.model_calls[0].model,'muse-wonder-1.0');assert.equal(r.model_calls[1].model,'muse-spark-1.3');
+  assert.equal(x.adapter.getRouteEvents()[0].costs[0].model,'muse-wonder-1.0');
+  await assert.rejects(x.adapter.callMeta({role:'wonder.review',messages:request.messages}),/WONDER_ROUTE_DISABLED/);
+  assert.equal(x.adapter.getRouteEvents().length,1);
+});
+
+test('Wonder review failure permits internal receipt-only work without claiming review completion',async()=>{
+  const x=fallbackFixture(false,'wonder.review');x.input.plan=await plan({goal:'Prepare demo outreach'},x.adapter);
+  x.input.payload.body=await draft({goal:x.input.plan.goal,plan:x.input.plan},x.adapter);
+  const advice=await review({body:x.input.payload.body},x.adapter);assert.equal(advice.completed,false);
+  const r=controller.checkPreflight(x.run,x.input,{semanticReviewCompleted:false});assert.equal(r.policy.verdict,'PASS');
+  assert.equal(controller.seal(x.run).state,'REPLAYABLE');
+  const s=controller.getRunSnapshot(x.run);assert.equal(s.data.semantic_review_completed,false);
+  assert(s.data.events.some(e=>e.event==='ROUTE_FALLBACK'&&e.detail.failed_role==='wonder.review'));
+});
+
+test('budget fallback is logged but cannot bypass R05; external missing review defaults HOLD',async()=>{
+  const x=fallbackFixture(false,'wonder.plan');x.adapter.activateFallback('wonder.plan','RUN_BUDGET_GUARD');
+  x.input.plan=await plan({goal:'Prepare demo outreach'},x.adapter);x.input.payload.body=await draft({goal:x.input.plan.goal,plan:x.input.plan},x.adapter);
+  x.input.costAccumulated=2;const r=controller.checkPreflight(x.run,x.input,{semanticReviewCompleted:false});
+  assert.equal(r.policy.verdict,'BLOCK');assert.equal(r.policy.primaryRule,'R-05');assert.equal(x.adapter.getRouteEvents()[0].reason,'RUN_BUDGET_GUARD');
+  assert(!x.adapter.getCalls().some(c=>c.role.startsWith('wonder.')));
+  const y=fallbackFixture(true,'wonder.plan');y.input.plan={goal:'Demo',steps:['Draft']};y.input.payload.body='A useful service.';
+  assert.equal(controller.checkPreflight(y.run,y.input).state,'HELD');
 });
 test('mock is default, deterministic and never reads key or calls network',async()=>{
   let network=0,keyReads=0;

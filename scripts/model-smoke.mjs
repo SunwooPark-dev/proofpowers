@@ -14,20 +14,23 @@ function saveReceipt(receipt) {
 }
 function printCall(call) {
   const diagnostics={http_status:call.http_status??null,response:call.response??{status:null,model:null},
-    incomplete_details:call.incomplete_details??{reason:null},usage:call.usage};
+    incomplete_details:call.incomplete_details??{reason:null},usage:call.usage,usd_estimate:call.usd_estimate};
   console.log(`${call.role} model=${call.model} mode=${call.mode} status=${call.status} request_hash=${call.request_hash} response_hash=${call.response_hash} diagnostics=${JSON.stringify(diagnostics)}`);
 }
 
 async function main() {
   const created=c.createRun({allowedActions:['draft'],allowedRecipients:[],costCap:1});
   if(!created.ok)throw Error('SMOKE_RUN_FAILED');
-  const run=created.run,models=createMetaRun({runId:run.id});
+  const run=created.run,models=createMetaRun({runId:run.id,onRouteEvent:e=>{
+    if(!c.recordRouteFallback(run,e).ok)throw Error('ROUTE_EVENT_RECORD_FAILED');
+  }});
   try {
   const proposal=await plan({goal:'Prepare demo outreach'},models);
   const body=await draft({goal:proposal.goal,plan:proposal},models);
   const advice=await review({body},models);
   const checked=c.checkPreflight(run,{plan:proposal,payload:{action_type:'draft',body},evidence:[],
-    hasExternalAction:false,costAccumulated:0,costEstimate:0},{semanticSignal:advice.signal});
+    hasExternalAction:false,costAccumulated:0,costEstimate:0},{semanticReviewCompleted:advice.completed,
+      ...(advice.completed===false?{}:{semanticSignal:advice.signal})});
   if(!checked.ok||checked.policy.verdict!=='PASS'||!c.seal(run).ok)throw Error('SMOKE_POLICY_FAILED');
   const receipt=buildReceipt({snapshot:c.getRunSnapshot(run),checks:checked.policy,model_calls:models.getCalls()});
   saveReceipt(receipt);

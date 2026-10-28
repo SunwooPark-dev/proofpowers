@@ -109,7 +109,7 @@ export function createRun(boundInputs, context = {}) {
     assert(text(id) && text(sessionId) && !runIds.has(id), 'INVALID_RUN_ID', 'Unique runId and nonempty sessionId required');
     const r = { id, sessionId, state: 'DRAFT', boundInputs: detached(b), events: [], input: null,
       plan: null, policy: null, approval: null, payloadHash: null, executionHash: null,
-      costAccumulated: 0, outcome: null, reconciliationRequired: false, receiptFailure: null };
+      costAccumulated: 0, outcome: null, reconciliationRequired: false, receiptFailure: null,reviewComplete:null };
     const run = Object.freeze({ id, sessionId, get state() { return r.state; } });
     event(r, 'RUN_CREATED', 'DRAFT', 'Bound Inputs fixed', { bound_inputs_hash: hashPayload(b) }, ts);
     runs.set(run, r); runIds.add(id);
@@ -126,9 +126,11 @@ export function checkPreflight(run, input, context = {}) {
       && plan.steps.length > 0 && plan.steps.every(text), 'INVALID_PLAN', 'plan requires goal and nonempty string steps');
     assert(!finiteCost(x.costAccumulated) || x.costAccumulated >= r.costAccumulated,
       'COST_REGRESSION', 'Accumulated cost cannot decrease');
-    const policy = evaluatePreflight(x, c);
+    const reviewComplete=typeof c.semanticReviewCompleted==='boolean'?c.semanticReviewCompleted:r.reviewComplete;
+    const policy = evaluatePreflight(x, x.hasExternalAction&&reviewComplete!==true?{...c,semanticSignal:'uncertain'}:c);
     const payloadHash = hashPayload(x.payload);
     r.input = detached(x); r.plan = detached(plan); r.payloadHash = payloadHash;
+    r.reviewComplete=reviewComplete;
     if (finiteCost(x.costAccumulated)) r.costAccumulated = x.costAccumulated;
     event(r, 'DRAFT_CHECKED', 'CHECKED', 'Plan JSON schema accepted; factual truth not certified', {}, ts);
     recordPolicy(r, policy, ts);
@@ -140,7 +142,9 @@ export function recheckHeld(run, context = {}) {
   return invoke(run, r => {
     stateIs(r, ['HELD']);
     const { context: c, ts } = requireContext(context);
-    const policy = evaluatePreflight(r.input, c);
+    const reviewComplete=typeof c.semanticReviewCompleted==='boolean'?c.semanticReviewCompleted:r.reviewComplete;
+    const policy = evaluatePreflight(r.input,r.input.hasExternalAction&&reviewComplete!==true?{...c,semanticSignal:'uncertain'}:c);
+    r.reviewComplete=reviewComplete;
     recordPolicy(r, policy, ts);
     return response(r, { policy: detached(policy) });
   });
@@ -150,6 +154,7 @@ export function approve(run, approval, context = {}) {
   return invoke(run, r => {
     stateIs(r, ['CHECKED', 'HELD']);
     const { ts } = requireContext(context), a = copy(approval), nowMs = Date.parse(ts);
+    assert(r.input.hasExternalAction!==true||r.reviewComplete===true,'R08_REVIEW_INCOMPLETE','External action requires completed semantic review');
     assert(r.policy?.verdict === 'PASS' || (r.policy?.primaryRule === 'R-08'
       && r.policy.checks.length > 0 && r.policy.checks.every(x => x.ok)),
     'NOT_APPROVABLE', 'Only a passed preflight or semantic-only hold can be approved');
@@ -182,6 +187,7 @@ export function beginDispatch(run, executionInput, context = {}) {
   return invoke(run, r => {
     stateIs(r, ['CHECKED', 'HELD', 'APPROVED']);
     const { context: c, ts } = requireContext(context);
+    assert(r.reviewComplete===true||r.input?.hasExternalAction!==true,'R08_REVIEW_INCOMPLETE','External action remains held until semantic review completes');
     if (r.state !== 'APPROVED') {
       const policy = { verdict: 'BLOCK', primaryRule: 'R-03', reason: 'No operator approval before dispatch', phase: 'execution' };
       recordPolicy(r, policy, ts);
@@ -315,13 +321,29 @@ export function reportReceiptFailure(run, reason, context = {}) {
   });
 }
 
+export function recordRouteFallback(run,detail,context={}) {
+  return invoke(run,r=>{
+    stateIs(r,['DRAFT','CHECKED','HELD']);
+    const {ts}=requireContext(context),d=copy(detail);
+    assert(object(d)&&d.event==='ROUTE_FALLBACK'&&d.run_id===r.id
+      &&['wonder.plan','wonder.review'].includes(d.failed_role)&&d.from_model==='muse-wonder-1.0'
+      &&d.to_model==='muse-spark-1.3'&&text(d.reason),'INVALID_ROUTE_EVENT','Bound fallback metadata required');
+    event(r,'ROUTE_FALLBACK',r.state,d.reason,{failed_role:d.failed_role,from_model:d.from_model,
+      to_model:d.to_model,costs:d.costs??[]},ts);
+    r.reviewComplete=false;
+    if(r.state==='CHECKED'&&r.input.hasExternalAction&&r.policy.verdict==='PASS')recordPolicy(r,
+      {...r.policy,verdict:'HELD',primaryRule:'R-08',reason:'Semantic review incomplete after route fallback'},ts);
+    return response(r);
+  });
+}
+
 function receiptData(r) {
   return { run_id: r.id, session_id: r.sessionId, state: r.state,
     bound_inputs_hash: hashPayload(r.boundInputs), plan: r.plan,
     policy: r.policy, approval: summaryApproval(r.approval),
     payload_hash: r.payloadHash, execution_hash: r.executionHash,
     costAccumulated: r.costAccumulated, outcome: r.outcome,
-    reconciliationRequired: r.reconciliationRequired, receiptFailure: r.receiptFailure,
+    reconciliationRequired: r.reconciliationRequired, receiptFailure: r.receiptFailure,semantic_review_completed:r.reviewComplete,
     events: r.events, final_event_hash: r.events.at(-1)?.hash ?? null,
     evidence_boundary: 'In-memory controller record; provider evidence supplied by caller; no external execution performed here' };
 }
