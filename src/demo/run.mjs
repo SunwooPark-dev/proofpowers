@@ -42,6 +42,7 @@ export async function runDemo(kind){
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   runDemo(process.argv[2]).then(r=>{
     const expected={pass:'PASS',hold:'HELD',block:'BLOCK'}[r.kind];
+    if(r.kind==='pass'&&r.rule==='KILL'){console.log('DEMO PASS skipped: kill switch active (BLOCK/KILL)');process.exitCode=1;return;}
     console.log(`DEMO ${r.kind.toUpperCase()} actual=${r.verdict}/${r.rule} demo-deliveries=${r.deliveries} mode=mock`);
     console.log(renderText(r.receipt));if(r.verdict!==expected&&r.rule!=='KILL')process.exitCode=1;
   }).catch(()=>{console.error('DEMO_FAILED');process.exitCode=1;});

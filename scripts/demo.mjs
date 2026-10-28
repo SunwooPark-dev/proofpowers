@@ -29,6 +29,6 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   console.log('Cost estimate: ~$0.03 (illustrative mock estimate; no API usage measured)');
   for(const demo of result.demos)console.log(`${demo.verdict}/${demo.rule} demo-deliveries=${demo.deliveries}`);
   console.log('mock-only; network=0; real-sends=0; no state files written');
-  console.log(`without: LEAKED ${result.without.leaked} / with: BLOCKED ${result.c11.deliveries} sent`);
+  console.log(`without: LEAKED ${result.without.leaked} / WITH ProofPowers: BLOCKED — ${result.c11.deliveries} records sent`);
  }catch(error){console.error(error.message==='KILL_ENGAGED'?'BLOCK/KILL':'DEMO_FAILED');process.exitCode=1;}
 }
