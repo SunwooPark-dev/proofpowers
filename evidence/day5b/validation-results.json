@@ -1,0 +1,108 @@
+{
+  "commands": [
+    {
+      "command": "npm run cases",
+      "exit_code": 0,
+      "output": "\n> proofpowers@0.1.0 cases\n> node src/cases/run.mjs\n\nC-01 expected=PASS/R-01 actual=PASS/R-01 correct=true\nC-02 expected=PASS/R-01 actual=PASS/R-01 correct=true\nC-03 expected=PASS/R-02 actual=PASS/R-02 correct=true\nC-04 expected=PASS/R-06 actual=PASS/R-06 correct=true\nC-05 expected=PASS/R-05 actual=PASS/R-05 correct=true\nC-06 expected=PASS/R-04 actual=PASS/R-04 correct=true\nC-07 expected=BLOCK/R-01 actual=BLOCK/R-01 correct=true\nC-08 expected=BLOCK/R-07 actual=BLOCK/R-07 correct=true\nC-09 expected=BLOCK/R-04 actual=BLOCK/R-04 correct=true\nC-10 expected=BLOCK/R-03 actual=BLOCK/R-03 correct=true\nC-11 expected=BLOCK/R-02 actual=BLOCK/R-02 correct=true\nC-12 expected=BLOCK/R-05 actual=BLOCK/R-05 correct=true\nsummary: 12/12 (PASS 6/6, BLOCK 6/6, PENDING 0)\nhard-gate: PASS\nC-08-ignored: expected=PASS/R-07 actual=PASS/R-07 correct=true (separate; excluded from fixed 12)\ndemo-calls: fixed=4 ignored=1 total=5 unapproved=0 tampered=0\nexecutor-not-called: C-01, C-04, C-07, C-08, C-09, C-10, C-11, C-12\nmodel-calls: mock=39 live=0 (not real Meta use)\nevidence: mock-only integration; no live model calls or external sends; not Day 6 official score\nOFFLINE_GUARD real_network_attempts=0\nOFFLINE_GUARD real_network_attempts=0\n"
+    },
+    {
+      "command": "npm run test:model",
+      "exit_code": 0,
+      "output": "\n> proofpowers@0.1.0 test:model\n> node --test test/model.test.mjs test/day5.test.mjs\n\n✔ budget reserves before requests and retains unknown failure exposure (1.5258ms)\n✔ known usage settles reservations; actual estimate over cap halts future requests (0.1901ms)\n✔ a second sequential budget instance loads the first run reservation (1.9321ms)\n✔ invalid-model injection is opt-in and affects only wonder.plan; mock has zero network (1.6469ms)\n✔ fixed three-cut demos PASS/HOLD/BLOCK have correct delivery boundaries (9.4ms)\n✔ HTTP 404 settlement with usage=false (10.4145ms)\n✔ HTTP 503 settlement with usage=false (0.3584ms)\n✔ HTTP 503 settlement with usage=true (0.3022ms)\n✔ HTTP 429 settlement with usage=true (0.3071ms)\n✔ HTTP 400 settlement with usage=true (0.3671ms)\n✔ timeout retains reservation and logs conservative settlement (0.3061ms)\n✔ budget settlement reaches hash-chained controller audit and ledger (0.8113ms)\n✔ dry-run stays offline even with live env and reports conservative total honestly (2.2526ms)\n✔ unparseable 4xx response does not prove usage absence and retains reservation (0.4545ms)\n✔ audit sink failure halts future reservations instead of silently freeing headroom (0.1687ms)\nOFFLINE_GUARD real_network_attempts=0\n✔ response model requires exact ID and rejects prefixes and other models (0.4569ms)\n✔ four roles use frozen model constants; META_MODEL override is never read (2.7637ms)\n✔ owner rate table produces model-specific USD estimates and unknown usage stays null (1.2953ms)\n✔ Wonder planning failure logs ROUTE_FALLBACK; Spark-only external run stays HOLD (5.7071ms)\n✔ Wonder review failure permits internal receipt-only work without claiming review completion (1.3822ms)\n✔ budget fallback is logged but cannot bypass R05; external missing review defaults HOLD (1.0117ms)\n✔ mock is default, deterministic and never reads key or calls network (0.3485ms)\n✔ independent run quotas refuse call 21 and record refusal without a request (0.5945ms)\n✔ same run ID cannot reset the call cap using another adapter (0.1033ms)\n✔ live guard refuses before reading key or invoking fetch; no live request tested (0.275ms)\n✔ unknown mode/role and malformed messages refuse without network (0.3586ms)\n✔ plan, draft and review actually use three adapter calls; invalid advice is uncertain (0.3076ms)\n✔ receipt keeps 3 role records, honest mock status, null usage and no raw prompts (0.4854ms)\n✔ primaryUnderTest validates passed predicates; restored runner 12/12 and safe fixture corrections (38.273ms)\nOFFLINE_GUARD real_network_attempts=0\nℹ tests 29\nℹ suites 0\nℹ pass 29\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 147.9825\nOFFLINE_GUARD real_network_attempts=0\n"
+    },
+    {
+      "command": "npm run model:dry-run",
+      "exit_code": 0,
+      "output": "\n> proofpowers@0.1.0 model:dry-run\n> node scripts/model-dry-run.mjs\n\n{\n  \"mode\": \"dry-run-mock-inputs\",\n  \"network_calls\": 0,\n  \"limit_usd\": 0.1,\n  \"calls\": [\n    {\n      \"role\": \"wonder.plan\",\n      \"model\": \"muse-wonder-1.0\",\n      \"input_token_upper\": 4305,\n      \"max_output_tokens\": 2048,\n      \"reserved_nanos\": 58180000,\n      \"reserved_usd\": 0.05818\n    },\n    {\n      \"role\": \"spark.draft\",\n      \"model\": \"muse-spark-1.3\",\n      \"input_token_upper\": 4445,\n      \"max_output_tokens\": 2048,\n      \"reserved_nanos\": 14260250,\n      \"reserved_usd\": 0.01426025\n    },\n    {\n      \"role\": \"wonder.review\",\n      \"model\": \"muse-wonder-1.0\",\n      \"input_token_upper\": 4351,\n      \"max_output_tokens\": 2048,\n      \"reserved_nanos\": 58364000,\n      \"reserved_usd\": 0.058364\n    }\n  ],\n  \"all_unsettled_reserved_usd\": 0.13080425,\n  \"all_unsettled_within_limit\": false,\n  \"each_call_individually_within_limit\": true,\n  \"sequential_live_fit\": \"UNKNOWN_REQUIRES_ACTUAL_USAGE_SETTLEMENT\",\n  \"note\": \"No usage or cost fabricated. Full output reservations may exceed the cap together; sequential settlement can free headroom. Live input lengths may differ.\"\n}\nOFFLINE_GUARD real_network_attempts=0\nOFFLINE_GUARD real_network_attempts=0\n"
+    },
+    {
+      "command": "npm run scan:secrets",
+      "exit_code": 0,
+      "output": "\n> proofpowers@0.1.0 scan:secrets\n> node scripts/scan-secrets.mjs\n\n{\"scanned_files\":21,\"findings\":[],\"match_count\":0,\"git_history\":\"NOT_SCANNED\",\"note\":\"Pattern scan only; values never printed; Git history and provider/account verification excluded\"}\nOFFLINE_GUARD real_network_attempts=0\nOFFLINE_GUARD real_network_attempts=0\n"
+    },
+    {
+      "command": "npm run smoke",
+      "exit_code": 0,
+      "output": "\n> proofpowers@0.1.0 smoke\n> node scripts/smoke.mjs\n\nsmoke: ok, package=proofpowers, node=v24.12.0\nOFFLINE_GUARD real_network_attempts=0\nOFFLINE_GUARD real_network_attempts=0\n"
+    }
+  ],
+  "syntax_checks": [
+    {
+      "file": "scripts\\model-dry-run.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "scripts\\model-smoke.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "scripts\\scan-secrets.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "scripts\\smoke.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "test\\day5.test.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "test\\model.test.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\agents\\spark.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\agents\\wonder.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\board\\board.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\cases\\cases.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\cases\\run.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\demo\\run.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\envelope\\envelope.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\envelope\\executor.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\model\\budget.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\model\\costs.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\model\\meta.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\policy\\engine.mjs",
+      "exit_code": 0
+    },
+    {
+      "file": "src\\run\\controller.mjs",
+      "exit_code": 0
+    }
+  ],
+  "live_calls": 0
+}

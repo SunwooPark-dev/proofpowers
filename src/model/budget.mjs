@@ -26,6 +26,14 @@ export function createRunBudget({path,limitUsd=0.10,onSettled}={}) {
       if(!Number.isSafeInteger(reserved)||total()+reserved>limit)fail('RUN_BUDGET_RESERVATION_DENIED');
       const id=randomUUID();state.requests.push({id,role,model,input_token_upper:inputUpper,max_output_tokens:maxOutputTokens,reserved_nanos:reserved,charged_nanos:reserved,usage:null,status:'reserved_unknown'});save();return id;
     },
+    releaseUnsettled(){
+      for(const r of state.requests.filter(r=>r.status==='reserved_unknown')){
+        r.charged_nanos=0;r.status='kill_released';
+        const entry={event:'BUDGET_SETTLED',ticket_id:r.id,role:r.role,reserved:r.reserved_nanos/1e9,settled:0,reason:'KILL_RESERVATION_RELEASED'};
+        state.events.push(entry);save();
+        try{onSettled?.(structuredClone(entry));}catch{state.halted=true;save();fail('RUN_BUDGET_AUDIT_FAILED');}
+      }
+    },
     settle(id,usage,{httpStatus=null,usageAbsent=false}={}) {
       const r=state.requests.find(r=>r.id===id);if(!r||r.status!=='reserved_unknown')fail('INVALID_RUN_BUDGET');
       const amount=estimateUsd(r.model,usage);

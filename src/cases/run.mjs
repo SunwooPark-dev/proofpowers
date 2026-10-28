@@ -9,6 +9,7 @@ import { buildReceipt, renderText } from '../board/board.mjs';
 import { createMetaRun } from '../model/meta.mjs';
 import { plan, review } from '../agents/wonder.mjs';
 import { draft } from '../agents/spark.mjs';
+import {persistSuite} from '../run/state.mjs';
 
 const NOW = Date.parse('2026-10-27T19:00:00Z');
 const POLICY_VERSION = 'day2-fixture-policy';
@@ -72,8 +73,11 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}, opt
       ...(options.modelEnv?{env:options.modelEnv}:{}),budget:options.budget,
       onRouteEvent:e=>requireOk(controller.recordRouteFallback(run,e,CONTEXT)) });
     f.input.plan = await plan({ goal: f.input.plan.goal }, models);
+    options.onStep?.('plan',run);
     f.input.payload.body = await draft({ goal: f.input.plan.goal, plan: f.input.plan }, models) + f.bodySuffix;
+    options.onStep?.('draft',run);
     const advisory = await review({ body: f.input.payload.body, evidence: f.input.evidence }, models);
+    options.onStep?.('review',run);
     const preflight = requireOk(controller.checkPreflight(run, f.input, {
       ...CONTEXT, primaryUnderTest: f.primaryUnderTest,semanticReviewCompleted:advisory.completed,
       ...(advisory.completed!==false||f.input.hasExternalAction?{semanticSignal:advisory.signal}:{}),
@@ -140,6 +144,7 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}, opt
       decisionPhase: selected.phase, sealed: run.state === 'REPLAYABLE', executorInvocations,
       deliveryCount: calls.filter(c => c.runId === run.id).length, ignoredObserved, trace, receipt,
       auditEvents:snapshot.data.events.filter(e=>['BUDGET_SETTLED','ROUTE_FALLBACK'].includes(e.event)),
+      runState:requireOk(controller.getReceiptData(run)).data,
       modelCalls: models.getCalls() };
   } catch (error) {
     if (run) {
@@ -148,10 +153,12 @@ async function runOne(id, calls, boundOverrides = BOUND_OVERRIDES[id] ?? {}, opt
         model_calls: models?.getCalls() ?? [],
         ...(executorResult ? { executorResult } : {}) });
     }
-    return { id, actual: 'ERROR', actualRule: null, decisionPhase: null, sealed: false,
+    const killed=run&&controller.getRunSnapshot(run).data?.policy?.primaryRule==='KILL';
+    return { id, actual:killed?'BLOCK':'ERROR', actualRule:killed?'KILL':null, decisionPhase:killed?'kill':null, sealed: false,
       executorInvocations, deliveryCount: run ? calls.filter(c => c.runId === run.id).length : 0,
       ignoredObserved: false, trace, receipt, modelCalls: models?.getCalls() ?? [],
       auditEvents:run?controller.getRunSnapshot(run).data?.events.filter(e=>['BUDGET_SETTLED','ROUTE_FALLBACK'].includes(e.event))??[]:[],
+      runState:run?controller.getReceiptData(run).data:null,
       errorCode:models?.getCalls().at(-1)?.error_code??(error.code==='RUN_BUDGET_EXCEEDED'?error.code:'CASE_INTEGRATION_FAILED') };
   }
 }
@@ -210,6 +217,7 @@ async function main(args) {
     console.error('usage: npm run cases -- [--receipt C-01..C-12|C-08-ignored]'); process.exitCode = 2; return;
   }
   const result = await runCases();
+  persistSuite(result);
   for (const r of result.rows) console.log(`${r.id} expected=${r.expected}/${r.expectedRule} actual=${r.actual}/${r.actualRule ?? '-'} correct=${r.correct}`);
   console.log(`summary: ${result.correct}/12 (PASS ${result.passCorrect}/6, BLOCK ${result.blockCorrect}/6, PENDING ${result.pending})`);
   console.log(`hard-gate: ${result.hardGate ? 'PASS' : `FAIL (${result.hardGateReasons.join(', ')})`}`);

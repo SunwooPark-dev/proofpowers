@@ -1,0 +1,195 @@
+{
+  "runId": "8de56ae5-6970-466e-a3d8-52843d18394e",
+  "state": "DRAFT",
+  "model_calls": [
+    {
+      "run_id": "8de56ae5-6970-466e-a3d8-52843d18394e",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "mode": "live",
+      "status": "refused",
+      "request_hash": "4fd89bd5df6a3323ed76ef8b44824a0cdfaa32c6490a3e1334e7823a2b35920c",
+      "response_hash": null,
+      "latency_ms": 0.204,
+      "usd_estimate": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null,
+        "source": "not_observed"
+      },
+      "request_attempted": false,
+      "error_code": "RUN_BUDGET_RESERVATION_DENIED"
+    }
+  ],
+  "route_events": [],
+  "boundInputs": {
+    "label": "Bound Inputs",
+    "items": [
+      {
+        "label": "allowedActions",
+        "status": "verified",
+        "value": [
+          "draft"
+        ],
+        "evidence": {
+          "source": "snapshot.boundInputs.allowedActions"
+        }
+      },
+      {
+        "label": "allowedRecipients",
+        "status": "verified",
+        "value": [],
+        "evidence": {
+          "source": "snapshot.boundInputs.allowedRecipients"
+        }
+      },
+      {
+        "label": "allowedTargets",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "source": "snapshot.boundInputs.allowedTargets"
+        }
+      },
+      {
+        "label": "allowedScopes",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "source": "snapshot.boundInputs.allowedScopes"
+        }
+      },
+      {
+        "label": "costCap",
+        "status": "verified",
+        "value": 1,
+        "evidence": {
+          "source": "snapshot.boundInputs.costCap",
+          "unit": "NOT CERTIFIED"
+        }
+      },
+      {
+        "label": "Evidence Registry",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "reason": "Registry absent from supplied snapshot"
+        }
+      }
+    ]
+  },
+  "predicates": {
+    "label": "Measured Predicates",
+    "items": [
+      {
+        "label": "Model call",
+        "status": "failed",
+        "value": {
+          "run_id": "8de56ae5-6970-466e-a3d8-52843d18394e",
+          "role": "wonder.plan",
+          "model": "muse-wonder-1.0",
+          "mode": "live",
+          "status": "refused",
+          "request_hash": "4fd89bd5df6a3323ed76ef8b44824a0cdfaa32c6490a3e1334e7823a2b35920c",
+          "response_hash": null,
+          "latency_ms": 0.204,
+          "usd_estimate": null,
+          "usage": {
+            "input_tokens": null,
+            "output_tokens": null,
+            "total_tokens": null,
+            "source": "not_observed"
+          },
+          "request_attempted": false,
+          "error_code": "RUN_BUDGET_RESERVATION_DENIED"
+        },
+        "evidence": {
+          "source": "model adapter metadata",
+          "reason": "Provider call record; model does not decide policy"
+        }
+      },
+      {
+        "label": "Measured predicates",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "reason": "No predicate array supplied"
+        }
+      },
+      {
+        "label": "R-08 semantic signal",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "reason": "No explicit semantic observation supplied"
+        }
+      },
+      {
+        "label": "Executor result",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "reason": "Executor result not supplied; state history still takes precedence"
+        }
+      }
+    ]
+  },
+  "nonActions": {
+    "label": "Non-actions",
+    "items": [
+      {
+        "label": "외부 발송 없음 — 제공된 런 기록 범위",
+        "status": "verified",
+        "value": "No dispatch/executed state in the supplied complete history",
+        "evidence": {
+          "source": "snapshot state/events and optional executor result",
+          "historyStructurallyComplete": true,
+          "reason": "This is an input-record assertion, not proof of all activity outside this run"
+        }
+      },
+      {
+        "label": "누적 비용 관측값",
+        "status": "verified",
+        "value": 0,
+        "evidence": {
+          "source": "snapshot.costAccumulated",
+          "unit": "NOT CERTIFIED"
+        }
+      },
+      {
+        "label": "승인 외 지출 없음",
+        "status": "not_certified",
+        "value": "NOT CERTIFIED",
+        "evidence": {
+          "reason": "A cumulative cost number is not a reconciled authorization/billing ledger"
+        }
+      },
+      {
+        "label": "관측 누적 비용 ≤ 고정 상한",
+        "status": "verified",
+        "value": true,
+        "evidence": {
+          "costAccumulated": 0,
+          "costCap": 1,
+          "reason": "Observed accumulated value only; future cost/billing is not certified"
+        }
+      }
+    ]
+  },
+  "nextGate": {
+    "label": "Next Gate (STOP)",
+    "items": [
+      {
+        "label": "STOP",
+        "status": "held",
+        "value": "소유자가 입력과 계획을 확인한다",
+        "evidence": {
+          "state": "DRAFT",
+          "reason": "Display only; no approval or dispatch is performed by this board"
+        }
+      }
+    ]
+  },
+  "route_fallback_audit": []
+}

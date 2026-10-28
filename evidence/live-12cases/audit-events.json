@@ -1,0 +1,866 @@
+[
+  {
+    "case_id": "C-01",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.008364,
+        "ticket_id": "a1f0e1c5-5061-4d61-a8af-ba5b0d5f5e00"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "a7a05d80afa4d4989c4f8d9192607e15d9b4bb30c96049ea1738309452894f55",
+      "payload_hash": null,
+      "prev_hash": "5305984d6a97c34637a88189047396ee2627edbf8446fef6968e2dbb992383b9",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "cc550594-f78d-4c0a-ac17-3b4881173431",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:04.945Z"
+    }
+  },
+  {
+    "case_id": "C-01",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.014529,
+        "role": "spark.draft",
+        "settled": 0.00394925,
+        "ticket_id": "bd031cf8-2b68-44a5-a0ed-e44f3ed90331"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "a899db756f790c56285562eb7274f9d46a656b4f03ed9faa60617996b1eeeca1",
+      "payload_hash": null,
+      "prev_hash": "a7a05d80afa4d4989c4f8d9192607e15d9b4bb30c96049ea1738309452894f55",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "cc550594-f78d-4c0a-ac17-3b4881173431",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:08.229Z"
+    }
+  },
+  {
+    "case_id": "C-01",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059052,
+        "role": "wonder.review",
+        "settled": 0.012524,
+        "ticket_id": "1267c4da-a8f1-49e7-8ef1-62eedeb35f5d"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "ab60108eabaf5180e322389087e8184f9deb0174da0b9171aea42c0208963f1b",
+      "payload_hash": null,
+      "prev_hash": "a899db756f790c56285562eb7274f9d46a656b4f03ed9faa60617996b1eeeca1",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "cc550594-f78d-4c0a-ac17-3b4881173431",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:12.966Z"
+    }
+  },
+  {
+    "case_id": "C-02",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.009624,
+        "ticket_id": "070f6255-dd82-4426-8fa9-7fd204d7a0ca"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "8f38a5fd7158148d00b14e6490ec470808ae84198dec65f1e629d28cfe613548",
+      "payload_hash": null,
+      "prev_hash": "ad0b56efabf09cee7324d015af7d9bfac84722d05d1264471473a1106153b5a6",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "9ba04e12-9be9-4fcc-8a95-e504ead6f5a8",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:17.353Z"
+    }
+  },
+  {
+    "case_id": "C-02",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01449275,
+        "role": "spark.draft",
+        "settled": 0.00612625,
+        "ticket_id": "899c349b-abe7-42af-92a6-2a186288dcee"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "8d61f3ce8a50cd5be963b327a9075598ef7f7bbaaee12863dc5cefd8b1f02d53",
+      "payload_hash": null,
+      "prev_hash": "8f38a5fd7158148d00b14e6490ec470808ae84198dec65f1e629d28cfe613548",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "9ba04e12-9be9-4fcc-8a95-e504ead6f5a8",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:22.957Z"
+    }
+  },
+  {
+    "case_id": "C-02",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059572,
+        "role": "wonder.review",
+        "settled": 0.008064,
+        "ticket_id": "1556c686-1644-41fc-80b4-55f0f48856c4"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "9ed7bcebd8d2bc1050fe7591d6bb483e69ff8cc5b49e703afe0e4e6a26e8c56c",
+      "payload_hash": null,
+      "prev_hash": "8d61f3ce8a50cd5be963b327a9075598ef7f7bbaaee12863dc5cefd8b1f02d53",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "9ba04e12-9be9-4fcc-8a95-e504ead6f5a8",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:25.841Z"
+    }
+  },
+  {
+    "case_id": "C-03",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.009244,
+        "ticket_id": "460cf7b9-eca1-41d2-b48c-89a4960332e1"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "67958b46b85510845086a34e8ad2700f26985e52ff8a6ce96d9b511475e6439a",
+      "payload_hash": null,
+      "prev_hash": "44227c087217ae95d2c30d74108d0afa5ff84ea11be420ebce0f6700a099e05f",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "8e584d14-fec4-4c13-a381-6fe4a1436883",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:29.352Z"
+    }
+  },
+  {
+    "case_id": "C-03",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01458775,
+        "role": "spark.draft",
+        "settled": 0.00509275,
+        "ticket_id": "2cc17820-ff51-4e3e-ba34-06939d23298e"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "1a7d521c224bc81d937275c3fd1c952c34e7c613d750e08da30730c22f9f3d5a",
+      "payload_hash": null,
+      "prev_hash": "67958b46b85510845086a34e8ad2700f26985e52ff8a6ce96d9b511475e6439a",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "8e584d14-fec4-4c13-a381-6fe4a1436883",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:35.244Z"
+    }
+  },
+  {
+    "case_id": "C-03",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059616,
+        "role": "wonder.review",
+        "settled": 0.008408,
+        "ticket_id": "94696119-0751-4670-bfe4-2930497d24c9"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "022359dba059f8869986a9333539fde9e9ba79015435653554fa5dba07ed8953",
+      "payload_hash": null,
+      "prev_hash": "1a7d521c224bc81d937275c3fd1c952c34e7c613d750e08da30730c22f9f3d5a",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "8e584d14-fec4-4c13-a381-6fe4a1436883",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:38.174Z"
+    }
+  },
+  {
+    "case_id": "C-04",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.010424,
+        "ticket_id": "0b882353-941f-466a-83b1-5be1be370ea6"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "b2deb66def032c8da2ff049b7e94cf27aec4240a447e7a3d74c8f70573cd733b",
+      "payload_hash": null,
+      "prev_hash": "3d66cdb035aaf21513546a90504fd34eb8d2372ae3ad167ef37f463f0e63b3b9",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "67ad3f88-fb48-43e0-9501-463470f95670",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:42.608Z"
+    }
+  },
+  {
+    "case_id": "C-04",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.0145865,
+        "role": "spark.draft",
+        "settled": 0.00687225,
+        "ticket_id": "8e5a2cab-abe5-4ea2-aaba-d5b0280129d5"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "dc869c7a653e3518a2a42002a08d97298d9cae00181e6d95c4ba4a6eb38a2930",
+      "payload_hash": null,
+      "prev_hash": "b2deb66def032c8da2ff049b7e94cf27aec4240a447e7a3d74c8f70573cd733b",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "67ad3f88-fb48-43e0-9501-463470f95670",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:48.951Z"
+    }
+  },
+  {
+    "case_id": "C-04",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059244,
+        "role": "wonder.review",
+        "settled": 0.01366,
+        "ticket_id": "466e4dbd-b3c9-43bd-ab62-eec8aae079a6"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "959930d35159d5cff7214d363ef2d87efa1d33891a231d5dddf7c8348562bfaa",
+      "payload_hash": null,
+      "prev_hash": "dc869c7a653e3518a2a42002a08d97298d9cae00181e6d95c4ba4a6eb38a2930",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "67ad3f88-fb48-43e0-9501-463470f95670",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:54.826Z"
+    }
+  },
+  {
+    "case_id": "C-05",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.008484,
+        "ticket_id": "af00c013-5328-422c-a0e7-1a7ebcc5a015"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "8ce7fd1083099abe8303f12ed256c09368e452d45c2d9a411552c6c73bb134c7",
+      "payload_hash": null,
+      "prev_hash": "b7a8d17d63e5361964c37f347ea80d5b4c7f074f83e46f2403668fa916a37eab",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "bdc160e2-14c3-422d-a5fc-594b593067f4",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:42:57.707Z"
+    }
+  },
+  {
+    "case_id": "C-05",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01462525,
+        "role": "spark.draft",
+        "settled": 0.00405475,
+        "ticket_id": "041082bb-6997-4e15-a34e-0bf416d83c79"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "2a90ca8c7e1b62a60aa7042c8155055cfb3ef2fde488f272ec8499259bdac6ea",
+      "payload_hash": null,
+      "prev_hash": "8ce7fd1083099abe8303f12ed256c09368e452d45c2d9a411552c6c73bb134c7",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "bdc160e2-14c3-422d-a5fc-594b593067f4",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:01.646Z"
+    }
+  },
+  {
+    "case_id": "C-05",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059188,
+        "role": "wonder.review",
+        "settled": 0.00806,
+        "ticket_id": "320359ef-a176-4bbb-b6d8-e6417e3adcae"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "53f3654d4e75c94b4049f3f6f52c7da360f95e6397c3f3842046de10d1417bb1",
+      "payload_hash": null,
+      "prev_hash": "2a90ca8c7e1b62a60aa7042c8155055cfb3ef2fde488f272ec8499259bdac6ea",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "bdc160e2-14c3-422d-a5fc-594b593067f4",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:04.693Z"
+    }
+  },
+  {
+    "case_id": "C-06",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.008964,
+        "ticket_id": "ae2b4118-2c27-4f49-a951-25acf253cc91"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "ed0bfbd8f86fdc154a73ac4094bc68945fb06bab20442e14d1518fa9e9f25dea",
+      "payload_hash": null,
+      "prev_hash": "8988d079d949f362e363b6784646cb3288f0acd3a609f8c4e70e7fa9cc9ed710",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "dbcd9571-6f14-440b-869c-42898cc9cb48",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:08.657Z"
+    }
+  },
+  {
+    "case_id": "C-06",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01446775,
+        "role": "spark.draft",
+        "settled": 0.00512075,
+        "ticket_id": "93324e72-b267-440c-81ff-1284eb3d1b44"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "b2341032e56b149bc0691fa78992d13b98fccd3f0b011011f97ddfcd9a8724d2",
+      "payload_hash": null,
+      "prev_hash": "ed0bfbd8f86fdc154a73ac4094bc68945fb06bab20442e14d1518fa9e9f25dea",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "dbcd9571-6f14-440b-869c-42898cc9cb48",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:14.520Z"
+    }
+  },
+  {
+    "case_id": "C-06",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059136,
+        "role": "wonder.review",
+        "settled": 0.010248,
+        "ticket_id": "4d231d30-85e2-4fb5-9cc0-18c7e2dc9e05"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "f403c700f963507c55ee0fbdffe051135c917c15254bda84e3e2f64bf6d0563b",
+      "payload_hash": null,
+      "prev_hash": "b2341032e56b149bc0691fa78992d13b98fccd3f0b011011f97ddfcd9a8724d2",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "dbcd9571-6f14-440b-869c-42898cc9cb48",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:19.091Z"
+    }
+  },
+  {
+    "case_id": "C-07",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.008404,
+        "ticket_id": "905effba-e5ff-4d0b-85d2-0007f7721e58"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "63fadef19dfb7d22cccbd778096dd6507e4291b06465725680f4ff92ce046ba2",
+      "payload_hash": null,
+      "prev_hash": "ec88347237021a3df99dddb28b6bfe2658126b23a2f2b86a38a83eaa16dc0bb7",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "56cbd9a5-2823-46cb-80e2-d196cc78823e",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:23.850Z"
+    }
+  },
+  {
+    "case_id": "C-07",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01456025,
+        "role": "spark.draft",
+        "settled": 0.005058,
+        "ticket_id": "fc8d6bf8-be08-4d42-9080-b93da7b2f94f"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "61678a2ae3032e8a3034b4c426961e05ed89a460bad335f2bbd67fe7a6e1ffa6",
+      "payload_hash": null,
+      "prev_hash": "63fadef19dfb7d22cccbd778096dd6507e4291b06465725680f4ff92ce046ba2",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "56cbd9a5-2823-46cb-80e2-d196cc78823e",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:28.353Z"
+    }
+  },
+  {
+    "case_id": "C-07",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059712,
+        "role": "wonder.review",
+        "settled": 0.0157,
+        "ticket_id": "ec61677f-20c0-4537-9860-97ec9901696a"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "8f11f1d603379f129279ceca0361d117eb382a5aa9be4361d55ed724d618c801",
+      "payload_hash": null,
+      "prev_hash": "61678a2ae3032e8a3034b4c426961e05ed89a460bad335f2bbd67fe7a6e1ffa6",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "56cbd9a5-2823-46cb-80e2-d196cc78823e",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:34.675Z"
+    }
+  },
+  {
+    "case_id": "C-08",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.009984,
+        "ticket_id": "a9454613-80e1-42ac-880e-dac14e7a1ae6"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "c92d072d8ee5aa038631b751f3bf03577ed392f0a25b5c22dab11914a90b47b6",
+      "payload_hash": null,
+      "prev_hash": "cd122d6c69de975844ee6eff9d88ec69d3efe9cdc1ef9856dc95dfd6b41f4fad",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "8f43f014-e07e-4bdb-ba37-0174a06e3672",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:38.812Z"
+    }
+  },
+  {
+    "case_id": "C-08",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.0146715,
+        "role": "spark.draft",
+        "settled": 0.00423875,
+        "ticket_id": "790e5a86-2827-4658-9682-29ad0565b91d"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "a404299cc37bd787d2c02d9bc47f594aa3ac08a02a2e4d1a8a4332b5fd04fc4a",
+      "payload_hash": null,
+      "prev_hash": "c92d072d8ee5aa038631b751f3bf03577ed392f0a25b5c22dab11914a90b47b6",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "8f43f014-e07e-4bdb-ba37-0174a06e3672",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:42.836Z"
+    }
+  },
+  {
+    "case_id": "C-08",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.058876,
+        "role": "wonder.review",
+        "settled": 0.00858,
+        "ticket_id": "fd6dd2ee-579d-4ef3-900f-870fefa14ccd"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "443c2abfd03a4b7ad1a120544c52c934bdd03537afd261b1e6939d8398bfc806",
+      "payload_hash": null,
+      "prev_hash": "a404299cc37bd787d2c02d9bc47f594aa3ac08a02a2e4d1a8a4332b5fd04fc4a",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "8f43f014-e07e-4bdb-ba37-0174a06e3672",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:45.824Z"
+    }
+  },
+  {
+    "case_id": "C-09",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.006324,
+        "ticket_id": "eb68d19e-daee-4842-83f6-0914323cd4db"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "b82403c471f3381876719db8c633e79206b094622cfcaf7ea217b8192abe7c1b",
+      "payload_hash": null,
+      "prev_hash": "685853041f54752615806cfb2900b15406ce7eeb284d6b847629287104ddd3e2",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "2f28f5f5-3e5f-496a-9baf-41668ce98946",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:48.255Z"
+    }
+  },
+  {
+    "case_id": "C-09",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01452525,
+        "role": "spark.draft",
+        "settled": 0.00434625,
+        "ticket_id": "8c23a112-1107-47c5-92c8-6e00cf36600c"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "7ffe4c1b30d7b5177505665b527b5a7ddb9401d50da32ec35973166e87e5350c",
+      "payload_hash": null,
+      "prev_hash": "b82403c471f3381876719db8c633e79206b094622cfcaf7ea217b8192abe7c1b",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "2f28f5f5-3e5f-496a-9baf-41668ce98946",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:52.111Z"
+    }
+  },
+  {
+    "case_id": "C-09",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059168,
+        "role": "wonder.review",
+        "settled": 0.015076,
+        "ticket_id": "11d75c06-db87-468a-bc0c-7b47702b77ac"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "815497ff996a76a61f76d464d5fbdf969f75b7712b974862a211786fd97e7154",
+      "payload_hash": null,
+      "prev_hash": "7ffe4c1b30d7b5177505665b527b5a7ddb9401d50da32ec35973166e87e5350c",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "2f28f5f5-3e5f-496a-9baf-41668ce98946",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:43:58.862Z"
+    }
+  },
+  {
+    "case_id": "C-10",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.012824,
+        "ticket_id": "83073ed5-9950-465d-ae4e-5e28369eed95"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "7f213611ee023a0bcc1e89bcc1beadbea003bfcb2a8f134e77f7243859f7d9f5",
+      "payload_hash": null,
+      "prev_hash": "434700ca57e09d790d90c900b59aeadeae52c149e7c352390d48e269556323d6",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "5b6ca5af-e214-4563-8609-b95655293be7",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:04.321Z"
+    }
+  },
+  {
+    "case_id": "C-10",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.0147015,
+        "role": "spark.draft",
+        "settled": 0.005302,
+        "ticket_id": "40abcefd-b608-4477-adc6-b8f96e7fc9f0"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "cf5b028f68286df769380cb525ea0638daa557f0e7db309d0863b4ebb66da5ec",
+      "payload_hash": null,
+      "prev_hash": "7f213611ee023a0bcc1e89bcc1beadbea003bfcb2a8f134e77f7243859f7d9f5",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "5b6ca5af-e214-4563-8609-b95655293be7",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:09.400Z"
+    }
+  },
+  {
+    "case_id": "C-10",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059436,
+        "role": "wonder.review",
+        "settled": 0.00856,
+        "ticket_id": "63c3e52b-f9f1-4474-876d-13737a30f4d9"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "4706015db41be08ec6907abef4281f6f7db53fd4da1e1245b6c3b5e0ca8c07b5",
+      "payload_hash": null,
+      "prev_hash": "cf5b028f68286df769380cb525ea0638daa557f0e7db309d0863b4ebb66da5ec",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "5b6ca5af-e214-4563-8609-b95655293be7",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:13.805Z"
+    }
+  },
+  {
+    "case_id": "C-11",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.012664,
+        "ticket_id": "e29f2d25-64c1-4cd8-a574-b4aa762f4ade"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "91ac5511b1cf04a049c0b40c9be976c6cd6c17a7a7ec86f90314caf57509e22b",
+      "payload_hash": null,
+      "prev_hash": "48d69f7705a18238feced5c97e3629d866f2271cab329d98437fbd9d16a9a286",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "3a017e63-ea93-4a5d-a0c3-492a5095e8e4",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:18.424Z"
+    }
+  },
+  {
+    "case_id": "C-11",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.014674,
+        "role": "spark.draft",
+        "settled": 0.00614375,
+        "ticket_id": "7988c5cc-f6af-4740-977d-1132005615ca"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "2bfe0df01d7b3cafa31a799a2eabc99434789095286491c84c11de6a6b2758bf",
+      "payload_hash": null,
+      "prev_hash": "91ac5511b1cf04a049c0b40c9be976c6cd6c17a7a7ec86f90314caf57509e22b",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "3a017e63-ea93-4a5d-a0c3-492a5095e8e4",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:24.678Z"
+    }
+  },
+  {
+    "case_id": "C-11",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059348,
+        "role": "wonder.review",
+        "settled": 0.011608,
+        "ticket_id": "bcab5c04-4644-4dde-a342-b6f1671eabcc"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "89ce5b43940bbf2214d78aa038094399b062e27b8a51631568853209e297e6ab",
+      "payload_hash": null,
+      "prev_hash": "2bfe0df01d7b3cafa31a799a2eabc99434789095286491c84c11de6a6b2758bf",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "3a017e63-ea93-4a5d-a0c3-492a5095e8e4",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:28.813Z"
+    }
+  },
+  {
+    "case_id": "C-12",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.05818,
+        "role": "wonder.plan",
+        "settled": 0.015424,
+        "ticket_id": "5b39c816-1213-4d60-811b-3fdcf3339be9"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "5e86b53a8fed761cad60da6da9cc1b174ea8e9d008ba4f64db4db5d5e57e2ee4",
+      "payload_hash": null,
+      "prev_hash": "a471cfdb5b00ee0aee7e7563d4b0082045a8f1dbf9e99db3e1326a0e93498857",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "5e3017cb-5267-4319-aae2-a65a3322f410",
+      "seq": 2,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:35.081Z"
+    }
+  },
+  {
+    "case_id": "C-12",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.01465025,
+        "role": "spark.draft",
+        "settled": 0.0062055,
+        "ticket_id": "7a920128-67c0-4d69-abd4-11682dd5a4bb"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "116e5b806a259b945d035189af66c5af869ffb2b445c6306e230a973d28bafe3",
+      "payload_hash": null,
+      "prev_hash": "5e86b53a8fed761cad60da6da9cc1b174ea8e9d008ba4f64db4db5d5e57e2ee4",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "5e3017cb-5267-4319-aae2-a65a3322f410",
+      "seq": 3,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:39.907Z"
+    }
+  },
+  {
+    "case_id": "C-12",
+    "event": {
+      "actor": "system",
+      "cost_tick": 0,
+      "detail": {
+        "reserved": 0.059304,
+        "role": "wonder.review",
+        "settled": 0.010648,
+        "ticket_id": "7dbf8e3f-8f1c-4275-b9f6-d978e822570a"
+      },
+      "event": "BUDGET_SETTLED",
+      "hash": "1807b42a0c6b2922e66424a8add501bf1b888a78481e0b80e12d5186e2f4561c",
+      "payload_hash": null,
+      "prev_hash": "116e5b806a259b945d035189af66c5af869ffb2b445c6306e230a973d28bafe3",
+      "reason": "PROVIDER_USAGE_ESTIMATE",
+      "rule_ids": [],
+      "run_id": "5e3017cb-5267-4319-aae2-a65a3322f410",
+      "seq": 4,
+      "state_from": "DRAFT",
+      "state_to": "DRAFT",
+      "ts": "2026-10-28T02:44:43.617Z"
+    }
+  }
+]

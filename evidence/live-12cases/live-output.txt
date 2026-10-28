@@ -1,0 +1,29 @@
+
+> proofpowers@0.1.0 cases:live
+> node scripts/cases-live.mjs --budget-json ../live-budget.json --receipt-json ../live-cases.json
+
+C-01 actual=PASS/R-01 model_calls=3 budget_usd=0.02483725
+C-02 actual=PASS/R-01 model_calls=3 budget_usd=0.0486515
+C-03 actual=PASS/R-02 model_calls=3 budget_usd=0.07139625
+C-04 actual=PASS/R-06 model_calls=3 budget_usd=0.1023525
+C-05 actual=PASS/R-05 model_calls=3 budget_usd=0.12295125
+C-06 actual=PASS/R-04 model_calls=3 budget_usd=0.147284
+C-07 actual=BLOCK/R-01 model_calls=3 budget_usd=0.176446
+C-08 actual=BLOCK/R-07 model_calls=3 budget_usd=0.19924875
+C-09 actual=BLOCK/R-04 model_calls=3 budget_usd=0.224995
+C-10 actual=BLOCK/R-03 model_calls=3 budget_usd=0.251681
+C-11 actual=BLOCK/R-02 model_calls=3 budget_usd=0.28209675
+C-12 actual=BLOCK/R-05 model_calls=3 budget_usd=0.31437425
+C-01 expected=PASS/R-01 actual=PASS/R-01 correct=true
+C-02 expected=PASS/R-01 actual=PASS/R-01 correct=true
+C-03 expected=PASS/R-02 actual=PASS/R-02 correct=true
+C-04 expected=PASS/R-06 actual=PASS/R-06 correct=true
+C-05 expected=PASS/R-05 actual=PASS/R-05 correct=true
+C-06 expected=PASS/R-04 actual=PASS/R-04 correct=true
+C-07 expected=BLOCK/R-01 actual=BLOCK/R-01 correct=true
+C-08 expected=BLOCK/R-07 actual=BLOCK/R-07 correct=true
+C-09 expected=BLOCK/R-04 actual=BLOCK/R-04 correct=true
+C-10 expected=BLOCK/R-03 actual=BLOCK/R-03 correct=true
+C-11 expected=BLOCK/R-02 actual=BLOCK/R-02 correct=true
+C-12 expected=BLOCK/R-05 actual=BLOCK/R-05 correct=true
+summary: 12/12 hard-gate=PASS stopped=false usd_estimate_accounted=0.31437425 limit=0.60

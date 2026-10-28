@@ -1,6 +1,7 @@
 import { canonicalize, hashPayload, evaluateExecutionPredicates } from '../policy/engine.mjs';
 import { getRunSnapshot } from '../run/controller.mjs';
 import { validateEnvelope } from './envelope.mjs';
+import {killBoundary} from '../run/kill.mjs';
 
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const text = x => typeof x === 'string' && x.trim().length > 0;
@@ -41,6 +42,7 @@ export function createExecutor({ transport, credentialProvider, tokenLedger = de
           transportAccessed: false, dispatchAttempted: false } });
       let e, keys, sensitiveToken, run, expiryMs, entryNowMs, entryTick;
       try {
+        if(killBoundary(context?.run?.id))return refused('Kill switch engaged','KILL');
         if (!object(context)) return refused('Trusted execution context required', 'R-03');
         const snapshot = getRunSnapshot(context.run);
         if (!snapshot.ok || snapshot.state !== 'DISPATCHING') {
@@ -109,8 +111,10 @@ export function createExecutor({ transport, credentialProvider, tokenLedger = de
       const unknown = reason => frozen({ ok: true, outcome: 'OUTCOME_UNKNOWN',
         evidence: { reason, demo: true, transportAttempted: attempted, tokenConsumed: true } });
       try {
+        if(killBoundary(run.id))return refused('Kill switch engaged','KILL');
         // Only this closure can invoke the provider; no credential is passed into deliver.
         const inbox = await credentialProvider();
+        if(killBoundary(run.id))return frozen({...refused('Kill switch engaged','KILL'),evidence:{credentialProviderAccessed:true,transportAccessed:false,dispatchAttempted:false}});
         // Provider lookup can yield. Do not deliver after the run ended or approval expired.
         const current = getRunSnapshot(run);
         if (!current.ok || current.state !== 'DISPATCHING'
@@ -122,6 +126,7 @@ export function createExecutor({ transport, credentialProvider, tokenLedger = de
         }
         const deliver = inbox.deliver;
         if (typeof deliver !== 'function') return unknown('Demo transport unavailable after token consumption; no automatic retry');
+        if(killBoundary(run.id))return frozen({...refused('Kill switch engaged','KILL'),evidence:{credentialProviderAccessed:true,transportAccessed:true,dispatchAttempted:false}});
         attempted = true;
         const raw = await deliver.call(inbox, e);
         // Raw adapter errors/objects never enter receipts; expose a small demo-only response.

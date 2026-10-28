@@ -1,0 +1,36 @@
+{
+  "mode": "dry-run-mock-inputs",
+  "network_calls": 0,
+  "limit_usd": 0.1,
+  "calls": [
+    {
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "reserved_usd": 0.05818
+    },
+    {
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4445,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14260250,
+      "reserved_usd": 0.01426025
+    },
+    {
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4351,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58364000,
+      "reserved_usd": 0.058364
+    }
+  ],
+  "all_unsettled_reserved_usd": 0.13080425,
+  "all_unsettled_within_limit": false,
+  "each_call_individually_within_limit": true,
+  "sequential_live_fit": "UNKNOWN_REQUIRES_ACTUAL_USAGE_SETTLEMENT",
+  "note": "No usage or cost fabricated. Full output reservations may exceed the cap together; sequential settlement can free headroom. Live input lengths may differ."
+}

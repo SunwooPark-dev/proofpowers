@@ -1,0 +1,12 @@
+# Verified false positives (2026-10-27): the flagged values in these two files
+# are SHA-256 file hashes recorded in source-hashes.json evidence manifests,
+# proven by recomputing the hash of scripts/scan-secrets.mjs (it matches the
+# flagged value exactly). A file hash is not a credential and cannot be used
+# to authenticate anywhere. Allowlisted by exact path so the generic-api-key
+# rule still applies everywhere else.
+[allowlist]
+description = "SHA-256 file hashes in source-hashes.json evidence manifests"
+paths = [
+  '''evidence/day5-live-normal/source-hashes\.json''',
+  '''evidence/live-12cases/source-hashes\.json''',
+]

@@ -1,0 +1,2 @@
+wonder.plan model=muse-wonder-1.0 mode=live status=refused request_hash=4fd89bd5df6a3323ed76ef8b44824a0cdfaa32c6490a3e1334e7823a2b35920c response_hash=null diagnostics={"http_status":null,"response":{"status":null,"model":null},"incomplete_details":{"reason":null},"usage":{"input_tokens":null,"output_tokens":null,"total_tokens":null,"source":"not_observed"},"usd_estimate":null}
+model:smoke error_code=RUN_BUDGET_RESERVATION_DENIED

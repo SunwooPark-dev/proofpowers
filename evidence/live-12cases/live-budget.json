@@ -1,0 +1,800 @@
+{
+  "limit_nanos": 600000000,
+  "halted": false,
+  "requests": [
+    {
+      "id": "a1f0e1c5-5061-4d61-a8af-ba5b0d5f5e00",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 8364000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 407
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "bd031cf8-2b68-44a5-a0ed-e44f3ed90331",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4660,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14529000,
+      "charged_nanos": 3949250,
+      "usage": {
+        "input_tokens": 113,
+        "output_tokens": 896
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "1267c4da-a8f1-49e7-8ef1-62eedeb35f5d",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4523,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59052000,
+      "charged_nanos": 12524000,
+      "usage": {
+        "input_tokens": 111,
+        "output_tokens": 604
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "070f6255-dd82-4426-8fa9-7fd204d7a0ca",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 9624000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 470
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "899c349b-abe7-42af-92a6-2a186288dcee",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4631,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14492750,
+      "charged_nanos": 6126250,
+      "usage": {
+        "input_tokens": 107,
+        "output_tokens": 1410
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "1556c686-1644-41fc-80b4-55f0f48856c4",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4653,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59572000,
+      "charged_nanos": 8064000,
+      "usage": {
+        "input_tokens": 131,
+        "output_tokens": 377
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "460cf7b9-eca1-41d2-b48c-89a4960332e1",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 9244000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 451
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "2cc17820-ff51-4e3e-ba34-06939d23298e",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4707,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14587750,
+      "charged_nanos": 5092750,
+      "usage": {
+        "input_tokens": 120,
+        "output_tokens": 1163
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "94696119-0751-4670-bfe4-2930497d24c9",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4664,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59616000,
+      "charged_nanos": 8408000,
+      "usage": {
+        "input_tokens": 132,
+        "output_tokens": 394
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "0b882353-941f-466a-83b1-5be1be370ea6",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 10424000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 510
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "8e5a2cab-abe5-4ea2-aaba-d5b0280129d5",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4706,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14586500,
+      "charged_nanos": 6872250,
+      "usage": {
+        "input_tokens": 119,
+        "output_tokens": 1582
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "466e4dbd-b3c9-43bd-ab62-eec8aae079a6",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4571,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59244000,
+      "charged_nanos": 13660000,
+      "usage": {
+        "input_tokens": 115,
+        "output_tokens": 660
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "af00c013-5328-422c-a0e7-1a7ebcc5a015",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 8484000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 413
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "041082bb-6997-4e15-a34e-0bf416d83c79",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4737,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14625250,
+      "charged_nanos": 4054750,
+      "usage": {
+        "input_tokens": 126,
+        "output_tokens": 917
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "320359ef-a176-4bbb-b6d8-e6417e3adcae",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4557,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59188000,
+      "charged_nanos": 8060000,
+      "usage": {
+        "input_tokens": 110,
+        "output_tokens": 381
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "ae2b4118-2c27-4f49-a951-25acf253cc91",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 8964000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 437
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "93324e72-b267-440c-81ff-1284eb3d1b44",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4611,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14467750,
+      "charged_nanos": 5120750,
+      "usage": {
+        "input_tokens": 105,
+        "output_tokens": 1174
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "4d231d30-85e2-4fb5-9cc0-18c7e2dc9e05",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4544,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59136000,
+      "charged_nanos": 10248000,
+      "usage": {
+        "input_tokens": 107,
+        "output_tokens": 491
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "905effba-e5ff-4d0b-85d2-0007f7721e58",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 8404000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 409
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "fc8d6bf8-be08-4d42-9080-b93da7b2f94f",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4685,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14560250,
+      "charged_nanos": 5058000,
+      "usage": {
+        "input_tokens": 116,
+        "output_tokens": 1156
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "ec61677f-20c0-4537-9860-97ec9901696a",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4688,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59712000,
+      "charged_nanos": 15700000,
+      "usage": {
+        "input_tokens": 160,
+        "output_tokens": 753
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "a9454613-80e1-42ac-880e-dac14e7a1ae6",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 9984000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 488
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "790e5a86-2827-4658-9682-29ad0565b91d",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4774,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14671500,
+      "charged_nanos": 4238750,
+      "usage": {
+        "input_tokens": 127,
+        "output_tokens": 960
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "fd6dd2ee-579d-4ef3-900f-870fefa14ccd",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4479,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58876000,
+      "charged_nanos": 8580000,
+      "usage": {
+        "input_tokens": 95,
+        "output_tokens": 410
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "eb68d19e-daee-4842-83f6-0914323cd4db",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 6324000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 305
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "8c23a112-1107-47c5-92c8-6e00cf36600c",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4657,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14525250,
+      "charged_nanos": 4346250,
+      "usage": {
+        "input_tokens": 111,
+        "output_tokens": 990
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "11d75c06-db87-468a-bc0c-7b47702b77ac",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4552,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59168000,
+      "charged_nanos": 15076000,
+      "usage": {
+        "input_tokens": 109,
+        "output_tokens": 732
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "83073ed5-9950-465d-ae4e-5e28369eed95",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 12824000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 630
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "40abcefd-b608-4477-adc6-b8f96e7fc9f0",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4798,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14701500,
+      "charged_nanos": 5302000,
+      "usage": {
+        "input_tokens": 131,
+        "output_tokens": 1209
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "63c3e52b-f9f1-4474-876d-13737a30f4d9",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4619,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59436000,
+      "charged_nanos": 8560000,
+      "usage": {
+        "input_tokens": 125,
+        "output_tokens": 403
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "e29f2d25-64c1-4cd8-a574-b4aa762f4ade",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 12664000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 622
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "7988c5cc-f6af-4740-977d-1132005615ca",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4776,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14674000,
+      "charged_nanos": 6143750,
+      "usage": {
+        "input_tokens": 138,
+        "output_tokens": 1405
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "bcab5c04-4644-4dde-a342-b6f1671eabcc",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4597,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59348000,
+      "charged_nanos": 11608000,
+      "usage": {
+        "input_tokens": 122,
+        "output_tokens": 556
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "5b39c816-1213-4d60-811b-3fdcf3339be9",
+      "role": "wonder.plan",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4305,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 58180000,
+      "charged_nanos": 15424000,
+      "usage": {
+        "input_tokens": 56,
+        "output_tokens": 760
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "7a920128-67c0-4d69-abd4-11682dd5a4bb",
+      "role": "spark.draft",
+      "model": "muse-spark-1.3",
+      "input_token_upper": 4757,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 14650250,
+      "charged_nanos": 6205500,
+      "usage": {
+        "input_tokens": 133,
+        "output_tokens": 1421
+      },
+      "status": "provider_usage_estimate"
+    },
+    {
+      "id": "7dbf8e3f-8f1c-4275-b9f6-d978e822570a",
+      "role": "wonder.review",
+      "model": "muse-wonder-1.0",
+      "input_token_upper": 4586,
+      "max_output_tokens": 2048,
+      "reserved_nanos": 59304000,
+      "charged_nanos": 10648000,
+      "usage": {
+        "input_tokens": 117,
+        "output_tokens": 509
+      },
+      "status": "provider_usage_estimate"
+    }
+  ],
+  "events": [
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "a1f0e1c5-5061-4d61-a8af-ba5b0d5f5e00",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.008364,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "bd031cf8-2b68-44a5-a0ed-e44f3ed90331",
+      "role": "spark.draft",
+      "reserved": 0.014529,
+      "settled": 0.00394925,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "1267c4da-a8f1-49e7-8ef1-62eedeb35f5d",
+      "role": "wonder.review",
+      "reserved": 0.059052,
+      "settled": 0.012524,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "070f6255-dd82-4426-8fa9-7fd204d7a0ca",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.009624,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "899c349b-abe7-42af-92a6-2a186288dcee",
+      "role": "spark.draft",
+      "reserved": 0.01449275,
+      "settled": 0.00612625,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "1556c686-1644-41fc-80b4-55f0f48856c4",
+      "role": "wonder.review",
+      "reserved": 0.059572,
+      "settled": 0.008064,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "460cf7b9-eca1-41d2-b48c-89a4960332e1",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.009244,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "2cc17820-ff51-4e3e-ba34-06939d23298e",
+      "role": "spark.draft",
+      "reserved": 0.01458775,
+      "settled": 0.00509275,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "94696119-0751-4670-bfe4-2930497d24c9",
+      "role": "wonder.review",
+      "reserved": 0.059616,
+      "settled": 0.008408,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "0b882353-941f-466a-83b1-5be1be370ea6",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.010424,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "8e5a2cab-abe5-4ea2-aaba-d5b0280129d5",
+      "role": "spark.draft",
+      "reserved": 0.0145865,
+      "settled": 0.00687225,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "466e4dbd-b3c9-43bd-ab62-eec8aae079a6",
+      "role": "wonder.review",
+      "reserved": 0.059244,
+      "settled": 0.01366,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "af00c013-5328-422c-a0e7-1a7ebcc5a015",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.008484,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "041082bb-6997-4e15-a34e-0bf416d83c79",
+      "role": "spark.draft",
+      "reserved": 0.01462525,
+      "settled": 0.00405475,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "320359ef-a176-4bbb-b6d8-e6417e3adcae",
+      "role": "wonder.review",
+      "reserved": 0.059188,
+      "settled": 0.00806,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "ae2b4118-2c27-4f49-a951-25acf253cc91",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.008964,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "93324e72-b267-440c-81ff-1284eb3d1b44",
+      "role": "spark.draft",
+      "reserved": 0.01446775,
+      "settled": 0.00512075,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "4d231d30-85e2-4fb5-9cc0-18c7e2dc9e05",
+      "role": "wonder.review",
+      "reserved": 0.059136,
+      "settled": 0.010248,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "905effba-e5ff-4d0b-85d2-0007f7721e58",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.008404,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "fc8d6bf8-be08-4d42-9080-b93da7b2f94f",
+      "role": "spark.draft",
+      "reserved": 0.01456025,
+      "settled": 0.005058,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "ec61677f-20c0-4537-9860-97ec9901696a",
+      "role": "wonder.review",
+      "reserved": 0.059712,
+      "settled": 0.0157,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "a9454613-80e1-42ac-880e-dac14e7a1ae6",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.009984,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "790e5a86-2827-4658-9682-29ad0565b91d",
+      "role": "spark.draft",
+      "reserved": 0.0146715,
+      "settled": 0.00423875,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "fd6dd2ee-579d-4ef3-900f-870fefa14ccd",
+      "role": "wonder.review",
+      "reserved": 0.058876,
+      "settled": 0.00858,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "eb68d19e-daee-4842-83f6-0914323cd4db",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.006324,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "8c23a112-1107-47c5-92c8-6e00cf36600c",
+      "role": "spark.draft",
+      "reserved": 0.01452525,
+      "settled": 0.00434625,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "11d75c06-db87-468a-bc0c-7b47702b77ac",
+      "role": "wonder.review",
+      "reserved": 0.059168,
+      "settled": 0.015076,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "83073ed5-9950-465d-ae4e-5e28369eed95",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.012824,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "40abcefd-b608-4477-adc6-b8f96e7fc9f0",
+      "role": "spark.draft",
+      "reserved": 0.0147015,
+      "settled": 0.005302,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "63c3e52b-f9f1-4474-876d-13737a30f4d9",
+      "role": "wonder.review",
+      "reserved": 0.059436,
+      "settled": 0.00856,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "e29f2d25-64c1-4cd8-a574-b4aa762f4ade",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.012664,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "7988c5cc-f6af-4740-977d-1132005615ca",
+      "role": "spark.draft",
+      "reserved": 0.014674,
+      "settled": 0.00614375,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "bcab5c04-4644-4dde-a342-b6f1671eabcc",
+      "role": "wonder.review",
+      "reserved": 0.059348,
+      "settled": 0.011608,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "5b39c816-1213-4d60-811b-3fdcf3339be9",
+      "role": "wonder.plan",
+      "reserved": 0.05818,
+      "settled": 0.015424,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "7a920128-67c0-4d69-abd4-11682dd5a4bb",
+      "role": "spark.draft",
+      "reserved": 0.01465025,
+      "settled": 0.0062055,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    },
+    {
+      "event": "BUDGET_SETTLED",
+      "ticket_id": "7dbf8e3f-8f1c-4275-b9f6-d978e822570a",
+      "role": "wonder.review",
+      "reserved": 0.059304,
+      "settled": 0.010648,
+      "reason": "PROVIDER_USAGE_ESTIMATE"
+    }
+  ]
+}

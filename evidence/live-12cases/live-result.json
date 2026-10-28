@@ -1,0 +1,13 @@
+{
+  "approval": "Owner 2026-10-27 19:38 PT explicit AGENTS24 HOLD exception",
+  "scope": "one C01-C12 suite only; pinned Wonder/Spark; budgetUSD0.60 shared; retries0; synthetic data; mock executor; no sends/commits/push",
+  "guard_preflight": "HOLD_EXPLICIT_OWNER_EXCEPTION",
+  "status": "EXPIRED",
+  "started_at": "2026-10-28T02:42:00.682985+00:00",
+  "suite_invocations": 1,
+  "retries": 0,
+  "command": "npm run cases:live -- --budget-json ../live-budget.json --receipt-json ../live-cases.json",
+  "exit_code": 0,
+  "finished_at": "2026-10-28T02:44:43.650049+00:00",
+  "source_unchanged_during_live": true
+}

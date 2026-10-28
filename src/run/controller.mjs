@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import {registerKillRun,killBoundary} from './kill.mjs';
 import { canonicalize, hashPayload, checkCost, evaluatePreflight,
   evaluateExecutionPredicates } from '../policy/engine.mjs';
 
@@ -40,6 +41,7 @@ function stateIs(r, states) {
 function event(r, name, to, reason, detail, ts, rules = []) {
   const from = name === 'RUN_CREATED' ? null : r.state;
   assert((from === null && name === 'RUN_CREATED' && to === 'DRAFT')
+    || (name==='KILL_ENGAGED'&&to==='BLOCKED')
     || from === to || edges[from]?.includes(to), 'ILLEGAL_TRANSITION', `${from} -> ${to}`);
   const item = { seq: r.events.length + 1, ts, run_id: r.id, event: name,
     actor: name.startsWith('OPERATOR_') ? 'owner' : name.startsWith('POLICY_') ? 'policy_engine' : 'system',
@@ -50,10 +52,13 @@ function event(r, name, to, reason, detail, ts, rules = []) {
   r.events.push(entry); r.state = to;
 }
 function response(r, extra = {}) { return { ok: true, state: r.state, ...extra }; }
-function invoke(handle, fn) {
+function invoke(handle, fn, readOnly=false) {
   const r = runs.get(handle);
   if (!r) return { ok: false, state: null, error: { code: 'INVALID_RUN', message: 'Unknown controller handle' } };
-  try { return fn(r); }
+  try {
+    if(!readOnly&&killBoundary(r.id))return {ok:false,state:r.state,policy:r.policy,error:{code:'KILL_ENGAGED',message:'Kill switch engaged'}};
+    return fn(r);
+  }
   catch (e) { return { ok: false, state: r.state, error: { code: e.code ?? 'INVALID_INPUT', message: e.message } }; }
 }
 function requireContext(context) {
@@ -113,7 +118,13 @@ export function createRun(boundInputs, context = {}) {
     const run = Object.freeze({ id, sessionId, get state() { return r.state; } });
     event(r, 'RUN_CREATED', 'DRAFT', 'Bound Inputs fixed', { bound_inputs_hash: hashPayload(b) }, ts);
     runs.set(run, r); runIds.add(id);
-    return response(r, { run });
+    registerKillRun(id,()=>{
+      if(r.events.some(e=>e.event==='KILL_ENGAGED')||['EXECUTED','REPLAYABLE','RECEIPTED'].includes(r.state))return;
+      r.policy=detached({verdict:'BLOCK',primaryRule:'KILL',reason:'Kill switch engaged',phase:'kill'});
+      event(r,'KILL_ENGAGED','BLOCKED','Kill switch engaged',{policy:r.policy},new Date().toISOString(),['KILL']);
+    });
+    killBoundary(id);
+    return response(r, { run,...(r.policy?{policy:r.policy}:{}) });
   } catch (e) { return { ok: false, state: null, error: { code: e.code ?? 'INVALID_INPUT', message: e.message } }; }
 }
 
@@ -323,15 +334,15 @@ export function reportReceiptFailure(run, reason, context = {}) {
 
 export function recordBudgetSettled(run,detail,context={}) {
   return invoke(run,r=>{
-    stateIs(r,['DRAFT','CHECKED','HELD']);
+    stateIs(r,['DRAFT','CHECKED','HELD','APPROVED','DISPATCHING']);
     const {ts}=requireContext(context),d=copy(detail);
     assert(object(d)&&d.event==='BUDGET_SETTLED'&&['wonder.plan','wonder.review','spark.draft','spark.rewrite'].includes(d.role)
       &&finiteCost(d.reserved)&&finiteCost(d.settled)&&text(d.ticket_id)
-      &&['PROVIDER_USAGE_ESTIMATE','HTTP_4XX_NO_USAGE_OWNER_POLICY','USAGE_UNKNOWN_RESERVATION_RETAINED'].includes(d.reason),
+      &&['PROVIDER_USAGE_ESTIMATE','HTTP_4XX_NO_USAGE_OWNER_POLICY','USAGE_UNKNOWN_RESERVATION_RETAINED','KILL_RESERVATION_RELEASED'].includes(d.reason),
       'INVALID_BUDGET_EVENT','Bound settlement metadata required');
     event(r,'BUDGET_SETTLED',r.state,d.reason,{role:d.role,reserved:d.reserved,settled:d.settled,ticket_id:d.ticket_id},ts);
     return response(r);
-  });
+  },true);
 }
 
 export function recordRouteFallback(run,detail,context={}) {
@@ -362,12 +373,12 @@ function receiptData(r) {
 }
 
 export function getReceiptData(run) {
-  return invoke(run, r => response(r, { data: detached(receiptData(r)) }));
+  return invoke(run, r => response(r, { data: detached(receiptData(r)) }),true);
 }
 
 export function getRunSnapshot(run) {
   return invoke(run, r => response(r, { data: detached({ ...receiptData(r),
-    boundInputs: r.boundInputs, payload: r.input?.payload ?? null }) }));
+    boundInputs: r.boundInputs, payload: r.input?.payload ?? null }) }),true);
 }
 
 export function seal(run, context = {}) {

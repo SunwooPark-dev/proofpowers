@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import {assertNotKilled,killBoundary,bindKillBudget} from '../run/kill.mjs';
 import { hashPayload } from '../policy/engine.mjs';
 import { estimateUsd, summarizeCosts } from './costs.mjs';
 
@@ -41,6 +42,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
   if(onRouteEvent!==undefined&&typeof onRouteEvent!=='function')fail('INVALID_ROUTE_EVENT_SINK');
   if (runIds.has(runId)) fail('DUPLICATE_MODEL_RUN');
   runIds.add(runId);
+  bindKillBudget(runId,budget);
   function activateFallback(failedRole,reason) {
     if(sparkOnly)return;
     if(!['wonder.plan','wonder.review'].includes(failedRole))fail('INVALID_FALLBACK_ROLE');
@@ -54,6 +56,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
     routeEvents.push(event);sparkOnly=true;
   }
   async function callMeta({ role, messages } = {}) {
+    assertNotKilled(runId,budget);
     const started = performance.now();
     const record = { run_id: runId, role: Object.hasOwn(replies, role) ? role : 'invalid',
       mode: ['mock', 'live'].includes(selectedMode) ? selectedMode : 'invalid', model: Object.hasOwn(ROLE_MODELS,role)?ROLE_MODELS[role]:null,
@@ -93,11 +96,13 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         record.request_hash = hashPayload({ role, body });
         if(budget){budgetTicket=budget.reserve({role,model:ratedModel,messages:input,maxOutputTokens});
           record.budget_ticket=budgetTicket;record.budget_reserved_usd=budget.snapshot().requests.find(r=>r.id===budgetTicket).reserved_nanos/1e9;}
+        assertNotKilled(runId,budget);
         record.request_attempted = true;
         const response = await fetch(`${base.origin}/v1/responses`, { method: 'POST', redirect: 'error',
           signal: AbortSignal.timeout(30000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(body) });
         record.http_status = response.status;
+        assertNotKilled(runId,budget);
         if (!response.ok) {
           // Inspect error usage in memory only; never retain provider bodies or headers.
           let errorData,parsed=false;
@@ -131,6 +136,9 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         request_hash: record.request_hash, response_hash: record.response_hash,
         latency_ms: record.latency_ms, usage: record.usage,usd_estimate:record.usd_estimate });
     } catch (error) {
+      if(error.code==='KILL_ENGAGED'||killBoundary(runId,budget)){
+        budgetSettled=true;error=Object.assign(Error('KILL_ENGAGED'),{code:'KILL_ENGAGED'});
+      }
       if(budgetTicket&&!budgetSettled){
         try{budgetSettled=true;budget.settle(budgetTicket,null);}catch(settlementError){error=settlementError;}
       }
@@ -138,10 +146,10 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
       const allowed = new Set(['INVALID_MODEL_MODE','INVALID_MODEL_REQUEST','MODEL_CALL_LIMIT',
         'SPEND_LIMIT_NOT_CONFIRMED','INVALID_META_API_BASE','INVALID_META_MODEL','META_API_KEY_REQUIRED',
         'META_HTTP_ERROR','META_RESPONSE_NOT_COMPLETE','META_RESPONSE_REJECTED','META_MOCK_UNAVAILABLE','WONDER_ROUTE_DISABLED',
-        'RUN_BUDGET_EXCEEDED','RUN_BUDGET_RESERVATION_DENIED','RUN_BUDGET_AUDIT_FAILED']);
+        'RUN_BUDGET_EXCEEDED','RUN_BUDGET_RESERVATION_DENIED','RUN_BUDGET_AUDIT_FAILED','KILL_ENGAGED']);
       const code = allowed.has(error.code) ? error.code : 'META_CALL_FAILED';
       record.error_code = code; calls.push(frozen(record));
-      if(!code.startsWith('RUN_BUDGET_')&&typeof role==='string'&&role.startsWith('wonder.')&&(record.request_attempted||['META_MOCK_UNAVAILABLE','MODEL_CALL_LIMIT'].includes(code)))activateFallback(role,code);
+      if(code!=='KILL_ENGAGED'&&!code.startsWith('RUN_BUDGET_')&&typeof role==='string'&&role.startsWith('wonder.')&&(record.request_attempted||['META_MOCK_UNAVAILABLE','MODEL_CALL_LIMIT'].includes(code)))activateFallback(role,code);
       fail(code);
     }
   }

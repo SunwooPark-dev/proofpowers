@@ -1,0 +1,17 @@
+{
+  "final_verdict": "PASS",
+  "receipt_state": "REPLAYABLE",
+  "api_requests": 3,
+  "retry_count": 0,
+  "budget_limit_usd": 0.15,
+  "usd_estimate_total": 0.02939075,
+  "remaining_usd": 0.12060925,
+  "peak_reserved_plus_settled_usd": 0.07605475,
+  "input_tokens": 302,
+  "output_tokens": 2508,
+  "total_tokens": 2810,
+  "model_ids_exact_match": true,
+  "audit_event_hashes_verified": 3,
+  "exception_status": "EXPIRED",
+  "code_unchanged_during_live": true
+}

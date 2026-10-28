@@ -1,0 +1,21 @@
+{
+  "scope": "Day5 forced fallback once and normal once; total reservation USD0.10; retries0",
+  "status": "EXPIRED",
+  "started_at": "2026-10-28T01:32:23.028784+00:00",
+  "runs": [
+    {
+      "name": "forced",
+      "exit_code": 0,
+      "command": "node scripts/model-smoke.mjs --force-wonder-plan-failure --external-hold-test --budget-json ../live-budget.json --receipt-json ../forced-live-receipt.json",
+      "output": "model:smoke mode=live real_meta_use=true\nwonder.plan model=muse-wonder-INVALID mode=live status=refused request_hash=3684cd9ec4a331235d26736b5da35c8cdc077f5d76ef90c99436009d8a5b40aa response_hash=null diagnostics={\"http_status\":404,\"response\":{\"status\":null,\"model\":null},\"incomplete_details\":{\"reason\":null},\"usage\":{\"input_tokens\":null,\"output_tokens\":null,\"total_tokens\":null,\"source\":\"not_observed\"},\"usd_estimate\":null}\nspark.draft model=muse-spark-1.3 mode=live status=success request_hash=6b7184989636fd945ec9c9992e2e34c9a977caaafe4af1582149f6dc4e4b875c response_hash=b85b6dad043b55f66ca3d7a5eb9e2710e961de58e13241eb2fb86d36cedfcc22 diagnostics={\"http_status\":200,\"response\":{\"status\":\"completed\",\"model\":\"muse-spark-1.3\"},\"incomplete_details\":{\"reason\":null},\"usage\":{\"input_tokens\":79,\"output_tokens\":1048,\"total_tokens\":1127,\"source\":\"provider_reported\"},\"usd_estimate\":0.00455275}\nROUTE_FALLBACK {\"event\":\"ROUTE_FALLBACK\",\"seq\":2,\"reason\":\"META_HTTP_ERROR\",\"failed_role\":\"wonder.plan\",\"from_model\":\"muse-wonder-1.0\",\"to_model\":\"muse-spark-1.3\",\"costs\":[{\"calls\":1,\"complete\":false,\"input_tokens\":null,\"model\":\"muse-wonder-1.0\",\"output_tokens\":null,\"usd_estimate\":null}]}\nbudget_accounted_usd=0.06273275 limit_usd=0.1\nreceipt model_calls=2 sections=4 state=HELD\nnetwork: ATTEMPTED\n"
+    },
+    {
+      "name": "normal",
+      "exit_code": 1,
+      "command": "node scripts/model-smoke.mjs --budget-json ../live-budget.json --receipt-json ../normal-live-receipt.json",
+      "output": "wonder.plan model=muse-wonder-1.0 mode=live status=refused request_hash=4fd89bd5df6a3323ed76ef8b44824a0cdfaa32c6490a3e1334e7823a2b35920c response_hash=null diagnostics={\"http_status\":null,\"response\":{\"status\":null,\"model\":null},\"incomplete_details\":{\"reason\":null},\"usage\":{\"input_tokens\":null,\"output_tokens\":null,\"total_tokens\":null,\"source\":\"not_observed\"},\"usd_estimate\":null}\nmodel:smoke error_code=RUN_BUDGET_RESERVATION_DENIED\n"
+    }
+  ],
+  "finished_at": "2026-10-28T01:32:27.301182+00:00",
+  "code_unchanged": true
+}

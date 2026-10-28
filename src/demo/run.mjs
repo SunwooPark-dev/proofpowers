@@ -12,7 +12,9 @@ export async function runDemo(kind){
   if(!['pass','hold','block'].includes(kind))throw Error('INVALID_DEMO');
   const bounds={allowedActions:['outreach_send'],allowedRecipients:['demo@example.test'],costCap:1};
   const run=ok(createRun(bounds)).run;let deliveries=0;
-  const models=createMetaRun({runId:run.id,mode:'mock',mockFailures:kind==='hold'?['wonder.plan']:[],onRouteEvent:e=>ok(recordRouteFallback(run,e))});
+  let models;
+  try{
+  models=createMetaRun({runId:run.id,mode:'mock',mockFailures:kind==='hold'?['wonder.plan']:[],onRouteEvent:e=>ok(recordRouteFallback(run,e))});
   const proposal=await plan({goal:'Prepare demo outreach'},models);
   let body=await draft({goal:proposal.goal,plan:proposal},models);if(kind==='block')body+=' Revenue increased 300%.';
   const advice=await review({body},models);
@@ -31,11 +33,16 @@ export async function runDemo(kind){
   if(checked.policy.verdict!=='HELD')ok(seal(run));
   const receipt=buildReceipt({snapshot:getRunSnapshot(run),checks:checked.policy,model_calls:models.getCalls(),...(outcome?{executorResult:outcome}:{})});
   return{kind,verdict:checked.policy.verdict,rule:checked.policy.primaryRule,deliveries,receipt};
+  }catch(error){
+    const snapshot=getRunSnapshot(run);
+    if(snapshot.data?.policy?.primaryRule!=='KILL')throw error;
+    return{kind,verdict:'BLOCK',rule:'KILL',deliveries,receipt:buildReceipt({snapshot,checks:snapshot.data.policy,model_calls:models?.getCalls()??[]})};
+  }
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   runDemo(process.argv[2]).then(r=>{
     const expected={pass:'PASS',hold:'HELD',block:'BLOCK'}[r.kind];
     console.log(`DEMO ${r.kind.toUpperCase()} actual=${r.verdict}/${r.rule} demo-deliveries=${r.deliveries} mode=mock`);
-    console.log(renderText(r.receipt));if(r.verdict!==expected)process.exitCode=1;
+    console.log(renderText(r.receipt));if(r.verdict!==expected&&r.rule!=='KILL')process.exitCode=1;
   }).catch(()=>{console.error('DEMO_FAILED');process.exitCode=1;});
 }

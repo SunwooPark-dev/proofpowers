@@ -1,0 +1,86 @@
+[
+  {
+    "file": "scripts\\cases-live.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "scripts\\model-dry-run.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "scripts\\model-smoke.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "scripts\\scan-secrets.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "scripts\\smoke.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "test\\day5.test.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "test\\live-cases.test.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "test\\model.test.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\agents\\spark.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\agents\\wonder.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\board\\board.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\cases\\cases.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\cases\\run.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\demo\\run.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\envelope\\envelope.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\envelope\\executor.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\model\\budget.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\model\\costs.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\model\\meta.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\policy\\engine.mjs",
+    "exit_code": 0
+  },
+  {
+    "file": "src\\run\\controller.mjs",
+    "exit_code": 0
+  }
+]
