@@ -24,11 +24,14 @@ async function main() {
   const forced=process.argv.includes('--force-wonder-plan-failure'),external=process.argv.includes('--external-hold-test');
   if(forced&&!external)throw Error('INVALID_TEST_FLAGS');
   const budgetIndex=process.argv.indexOf('--budget-json');
-  const budget=budgetIndex<0?undefined:createRunBudget({path:process.argv[budgetIndex+1],limitUsd:0.10});
   const bounds={allowedActions:[external?'outreach_send':'draft'],allowedRecipients:external?['demo@example.test']:[],costCap:1};
   const created=c.createRun(bounds);
   if(!created.ok)throw Error('SMOKE_RUN_FAILED');
-  const run=created.run,models=createMetaRun({runId:run.id,testInvalidWonderPlan:forced,budget,onRouteEvent:e=>{
+  const run=created.run;
+  const budget=budgetIndex<0?undefined:createRunBudget({path:process.argv[budgetIndex+1],limitUsd:0.15,onSettled:e=>{
+    if(!c.recordBudgetSettled(run,e).ok)throw Error('BUDGET_AUDIT_FAILED');
+  }});
+  const models=createMetaRun({runId:run.id,testInvalidWonderPlan:forced,budget,onRouteEvent:e=>{
     if(!c.recordRouteFallback(run,e).ok)throw Error('ROUTE_EVENT_RECORD_FAILED');
   }});
   try {
@@ -42,18 +45,21 @@ async function main() {
   if(!checked.ok||(forced?checked.state!=='HELD':checked.policy.verdict!=='PASS'))throw Error('SMOKE_POLICY_FAILED');
   if(!external&&!c.seal(run).ok)throw Error('SMOKE_POLICY_FAILED');
   const receipt={...buildReceipt({snapshot:c.getRunSnapshot(run),checks:checked.policy,model_calls:models.getCalls()}),
+    budget_settlement_audit:c.getRunSnapshot(run).data.events.filter(e=>e.event==='BUDGET_SETTLED'),
     route_fallback_audit:c.getRunSnapshot(run).data.events.filter(e=>e.event==='ROUTE_FALLBACK')};
   saveReceipt(receipt);
   const calls=receipt.model_calls;
   console.log(`model:smoke mode=${calls[0]?.mode} real_meta_use=${calls.some(c=>c.mode==='live'&&c.status==='success')}`);
   for(const call of calls)printCall(call);
   for(const e of receipt.route_events)console.log(`ROUTE_FALLBACK ${JSON.stringify(e)}`);
-  if(budget)console.log(`budget_accounted_usd=${budget.snapshot().accounted_usd} limit_usd=0.1`);
+  for(const e of receipt.budget_settlement_audit)console.log(`BUDGET_SETTLED ${JSON.stringify(e)}`);
+  if(budget)console.log(`budget_accounted_usd=${budget.snapshot().accounted_usd} limit_usd=0.15`);
   console.log(`receipt model_calls=${calls.length} sections=4 state=${receipt.state}`);
   console.log(`network: ${calls.some(c=>c.request_attempted)?'ATTEMPTED':'NOT_CALLED'}`);
   if(process.argv.includes('--receipt'))console.log(renderText(receipt));
   } catch(error) {
     const receipt={...buildReceipt({snapshot:c.getRunSnapshot(run),model_calls:models.getCalls()}),
+      budget_settlement_audit:c.getRunSnapshot(run).data.events.filter(e=>e.event==='BUDGET_SETTLED'),
       route_fallback_audit:c.getRunSnapshot(run).data.events.filter(e=>e.event==='ROUTE_FALLBACK')};
     const known=new Set(['INVALID_MODEL_PLAN','INVALID_MODEL_DRAFT','SMOKE_POLICY_FAILED','RECEIPT_PATH_REQUIRED']);
     const code=models.getCalls().at(-1)?.error_code??(known.has(error.message)?error.message:'SMOKE_FAILED');

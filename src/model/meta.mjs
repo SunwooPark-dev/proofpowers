@@ -59,7 +59,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
       mode: ['mock', 'live'].includes(selectedMode) ? selectedMode : 'invalid', model: Object.hasOwn(ROLE_MODELS,role)?ROLE_MODELS[role]:null,
       request_hash: null, response_hash: null, latency_ms: 0, usage: usage(null, selectedMode === 'mock' ? 'not_measured_mock' : 'not_observed'),
       status: 'refused', request_attempted: false, usd_estimate:null };
-    let budgetTicket;
+    let budgetTicket,budgetSettled=false;
     try {
       if (!['mock', 'live'].includes(selectedMode)) fail('INVALID_MODEL_MODE');
       if (!Object.hasOwn(replies, role) || !Array.isArray(messages) || messages.length === 0
@@ -91,14 +91,23 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         const maxOutputTokens=2048;
         const body = { model: record.model, input, max_output_tokens: maxOutputTokens, store: false, stream: false };
         record.request_hash = hashPayload({ role, body });
-        if(budget){budgetTicket=budget.reserve({model:ratedModel,messages:input,maxOutputTokens});
+        if(budget){budgetTicket=budget.reserve({role,model:ratedModel,messages:input,maxOutputTokens});
           record.budget_ticket=budgetTicket;record.budget_reserved_usd=budget.snapshot().requests.find(r=>r.id===budgetTicket).reserved_nanos/1e9;}
         record.request_attempted = true;
         const response = await fetch(`${base.origin}/v1/responses`, { method: 'POST', redirect: 'error',
           signal: AbortSignal.timeout(30000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
           body: JSON.stringify(body) });
         record.http_status = response.status;
-        if (!response.ok) fail('META_HTTP_ERROR');
+        if (!response.ok) {
+          // Inspect error usage in memory only; never retain provider bodies or headers.
+          let errorData,parsed=false;
+          try{errorData=await response.json();parsed=errorData!==null&&typeof errorData==='object';}catch{}
+          record.usage=usage(errorData?.usage,'provider_error_usage');
+          record.usd_estimate=estimateUsd(ratedModel,record.usage);
+          if(budgetTicket){budgetSettled=true;budget.settle(budgetTicket,response.status>=500?null:record.usage,{
+            httpStatus:response.status,usageAbsent:parsed&&errorData.usage==null});}
+          fail('META_HTTP_ERROR');
+        }
         const data = await response.json();
         // Whitelisted metadata is retained even when the strict completion/model check fails.
         record.response = {status:diagnosticId(data?.status,key),model:diagnosticId(data?.model,key)};
@@ -106,7 +115,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         reportedUsage = usage(data?.usage, 'provider_reported');
         record.usage = reportedUsage;
         record.usd_estimate = estimateUsd(ratedModel,reportedUsage);
-        if(budgetTicket)budget.settle(budgetTicket,reportedUsage);
+        if(budgetTicket){budgetSettled=true;budget.settle(budgetTicket,reportedUsage);}
         record.response_hash = hashPayload(data);
         if (data?.status !== 'completed' || !responseModelMatches(record.model,data?.model)) fail('META_RESPONSE_NOT_COMPLETE');
         text = (data.output ?? []).filter(x => x.type === 'message' && x.role === 'assistant')
@@ -122,11 +131,14 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         request_hash: record.request_hash, response_hash: record.response_hash,
         latency_ms: record.latency_ms, usage: record.usage,usd_estimate:record.usd_estimate });
     } catch (error) {
+      if(budgetTicket&&!budgetSettled){
+        try{budgetSettled=true;budget.settle(budgetTicket,null);}catch(settlementError){error=settlementError;}
+      }
       record.latency_ms = Number((performance.now() - started).toFixed(3));
       const allowed = new Set(['INVALID_MODEL_MODE','INVALID_MODEL_REQUEST','MODEL_CALL_LIMIT',
         'SPEND_LIMIT_NOT_CONFIRMED','INVALID_META_API_BASE','INVALID_META_MODEL','META_API_KEY_REQUIRED',
         'META_HTTP_ERROR','META_RESPONSE_NOT_COMPLETE','META_RESPONSE_REJECTED','META_MOCK_UNAVAILABLE','WONDER_ROUTE_DISABLED',
-        'RUN_BUDGET_EXCEEDED','RUN_BUDGET_RESERVATION_DENIED']);
+        'RUN_BUDGET_EXCEEDED','RUN_BUDGET_RESERVATION_DENIED','RUN_BUDGET_AUDIT_FAILED']);
       const code = allowed.has(error.code) ? error.code : 'META_CALL_FAILED';
       record.error_code = code; calls.push(frozen(record));
       if(!code.startsWith('RUN_BUDGET_')&&typeof role==='string'&&role.startsWith('wonder.')&&(record.request_attempted||['META_MOCK_UNAVAILABLE','MODEL_CALL_LIMIT'].includes(code)))activateFallback(role,code);

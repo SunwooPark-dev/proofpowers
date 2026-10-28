@@ -34,3 +34,4 @@ Wonder provider failure, timeout, invalid structured output or host budget-guard
 The standard runner/smoke wire route events into Controller audit logs. External callers must supply semanticReviewCompleted=true from a completed review; missing/false reviews remain HELD, and approval/dispatch cannot bypass that boundary. Internal fallback drafts may seal without external execution. The host audit sink must be connected when using createMetaRun outside these entry points.
 
 Day 5: demo three cuts PASS/HOLD/BLOCK verified in mock; live forced-failure fallback proven (HELD/R-08, Spark $0.0046 estimate); normal live PASS not verified — budget reservation guard refused before network (see Day 5 evidence).
+Day 5b: 4xx no-usage reservations settle to $0 by owner policy (5xx/timeout/malformed retain); normal live PASS verified on the new tree (3/3, 2,810 tokens, $0.0294 estimate); smoke budget default is now $0.15.

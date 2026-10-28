@@ -321,6 +321,19 @@ export function reportReceiptFailure(run, reason, context = {}) {
   });
 }
 
+export function recordBudgetSettled(run,detail,context={}) {
+  return invoke(run,r=>{
+    stateIs(r,['DRAFT','CHECKED','HELD']);
+    const {ts}=requireContext(context),d=copy(detail);
+    assert(object(d)&&d.event==='BUDGET_SETTLED'&&['wonder.plan','wonder.review','spark.draft','spark.rewrite'].includes(d.role)
+      &&finiteCost(d.reserved)&&finiteCost(d.settled)&&text(d.ticket_id)
+      &&['PROVIDER_USAGE_ESTIMATE','HTTP_4XX_NO_USAGE_OWNER_POLICY','USAGE_UNKNOWN_RESERVATION_RETAINED'].includes(d.reason),
+      'INVALID_BUDGET_EVENT','Bound settlement metadata required');
+    event(r,'BUDGET_SETTLED',r.state,d.reason,{role:d.role,reserved:d.reserved,settled:d.settled,ticket_id:d.ticket_id},ts);
+    return response(r);
+  });
+}
+
 export function recordRouteFallback(run,detail,context={}) {
   return invoke(run,r=>{
     stateIs(r,['DRAFT','CHECKED','HELD']);
