@@ -3,6 +3,7 @@
 const object = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const text = x => typeof x === 'string' && x.trim().length > 0;
 const amount = x => typeof x === 'number' && Number.isFinite(x) && x >= 0;
+const diagnosticId=x=>typeof x==='string'&&/^[A-Za-z0-9._:-]{1,128}$/.test(x)&&!/^(LLM_|sk-)/i.test(x)?x:null;
 const states = new Set(['DRAFT','CHECKED','BLOCKED','HELD','APPROVED','DISPATCHING',
   'EXECUTED','FAILED_NOT_SENT','OUTCOME_UNKNOWN','REJECTED','REFUSED','FAILED','RECEIPTED','REPLAYABLE']);
 const labels = { boundInputs:'Bound Inputs', predicates:'Measured Predicates',
@@ -115,6 +116,9 @@ export function buildReceipt(input={}) {
         total_tokens:c.usage?.total_tokens??null,source:c.usage?.source??unknown},
       request_attempted:c.request_attempted===true};
     if(c.error_code!==undefined)call.error_code=c.error_code;
+    if(Number.isInteger(c.http_status)&&c.http_status>=100&&c.http_status<=599)call.http_status=c.http_status;
+    if(object(c.response))call.response={status:diagnosticId(c.response.status),model:diagnosticId(c.response.model)};
+    if(object(c.incomplete_details))call.incomplete_details={reason:diagnosticId(c.incomplete_details.reason)};
     modelCalls.push(call);
     const supported=c.status==='success'&&c.mode==='live'&&c.request_attempted===true
       &&typeof c.model==='string'&&/^muse-spark-1\.[123]$/.test(c.model)

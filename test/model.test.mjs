@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createMetaRun } from '../src/model/meta.mjs';
+import { createMetaRun, responseModelMatches } from '../src/model/meta.mjs';
 import { plan, review } from '../src/agents/wonder.mjs';
 import { draft } from '../src/agents/spark.mjs';
 import { runCases } from '../src/cases/run.mjs';
@@ -9,6 +9,13 @@ import { evaluatePreflight } from '../src/policy/engine.mjs';
 import { CASES } from '../src/cases/cases.mjs';
 
 const request={role:'spark.draft',messages:[{role:'user',content:'Draft an introduction'}]};
+test('response model accepts exact or requested-dash suffix and rejects other names',()=>{
+  assert.equal(responseModelMatches('muse-spark-1.3','muse-spark-1.3'),true);
+  assert.equal(responseModelMatches('muse-spark-1.3','muse-spark-1.3-20261027'),true);
+  for(const name of ['muse-spark-1.30','muse-spark-1.3evil','muse-spark-1.2','llama',null,42])
+    assert.equal(responseModelMatches('muse-spark-1.3',name),false);
+  assert.equal(responseModelMatches('', '-anything'),false);
+});
 test('mock is default, deterministic and never reads key or calls network',async()=>{
   let network=0,keyReads=0;
   const old=globalThis.fetch;globalThis.fetch=async()=>{network++;throw Error('UNEXPECTED_NETWORK');};

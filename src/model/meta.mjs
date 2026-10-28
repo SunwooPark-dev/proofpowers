@@ -16,6 +16,12 @@ const usage = (raw, source) => ({
   total_tokens: Number.isSafeInteger(raw?.total_tokens) && raw.total_tokens >= 0 ? raw.total_tokens : null,
   source,
 });
+export function responseModelMatches(requested, returned) {
+  return typeof requested === 'string' && requested.length > 0 && typeof returned === 'string'
+    && (returned === requested || returned.startsWith(`${requested}-`));
+}
+const diagnosticId = (value,key) => typeof value==='string' && /^[A-Za-z0-9._:-]{1,128}$/.test(value)
+  && !value.includes(key) && !/^(LLM_|sk-)/i.test(value) ? value : null;
 
 // One instance per controller run. No retry, no prompt/response/key stored in the ledger.
 export function createMetaRun({ runId = randomUUID(), mode, env = process.env } = {}) {
@@ -54,7 +60,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env } 
         const key = env.META_API_KEY;
         if (typeof key !== 'string' || !key.trim()) fail('META_API_KEY_REQUIRED');
         record.model = env.META_MODEL;
-        const body = { model: record.model, input, max_output_tokens: 512, store: false, stream: false };
+        const body = { model: record.model, input, max_output_tokens: 2048, store: false, stream: false };
         record.request_hash = hashPayload({ role, body });
         record.request_attempted = true;
         const response = await fetch(`${base.origin}/v1/responses`, { method: 'POST', redirect: 'error',
@@ -63,13 +69,17 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env } 
         record.http_status = response.status;
         if (!response.ok) fail('META_HTTP_ERROR');
         const data = await response.json();
+        // Whitelisted metadata is retained even when the strict completion/model check fails.
+        record.response = {status:diagnosticId(data?.status,key),model:diagnosticId(data?.model,key)};
+        record.incomplete_details = {reason:diagnosticId(data?.incomplete_details?.reason,key)};
+        reportedUsage = usage(data?.usage, 'provider_reported');
+        record.usage = reportedUsage;
         record.response_hash = hashPayload(data);
-        if (data.status !== 'completed' || data.model !== record.model) fail('META_RESPONSE_NOT_COMPLETE');
+        if (data?.status !== 'completed' || !responseModelMatches(record.model,data?.model)) fail('META_RESPONSE_NOT_COMPLETE');
         text = (data.output ?? []).filter(x => x.type === 'message' && x.role === 'assistant')
           .flatMap(x => x.content ?? []).filter(x => x.type === 'output_text' && typeof x.text === 'string')
           .map(x => x.text).join('\n');
         if (!text || text.includes(key)) fail('META_RESPONSE_REJECTED');
-        reportedUsage = usage(data.usage, 'provider_reported');
       }
       record.status = 'success'; record.usage = reportedUsage;
       record.latency_ms = Number((performance.now() - started).toFixed(3));
