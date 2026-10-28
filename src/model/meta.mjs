@@ -30,7 +30,8 @@ const diagnosticId = (value,key) => typeof value==='string' && /^[A-Za-z0-9._:-]
   && !value.includes(key) && !/^(LLM_|sk-)/i.test(value) ? value : null;
 
 // One instance per controller run. No retry, no prompt/response/key stored in the ledger.
-export function createMetaRun({ runId = randomUUID(), mode, env = process.env, mockFailures = [], onRouteEvent } = {}) {
+export function createMetaRun({ runId = randomUUID(), mode, env = process.env, mockFailures = [], onRouteEvent,
+  testInvalidWonderPlan=false,budget } = {}) {
   const calls = []; let used = 0;
   const routeEvents=[];let sparkOnly=false;
   const selectedMode = mode ?? env.PP_MODEL_MODE ?? 'mock';
@@ -58,6 +59,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
       mode: ['mock', 'live'].includes(selectedMode) ? selectedMode : 'invalid', model: Object.hasOwn(ROLE_MODELS,role)?ROLE_MODELS[role]:null,
       request_hash: null, response_hash: null, latency_ms: 0, usage: usage(null, selectedMode === 'mock' ? 'not_measured_mock' : 'not_observed'),
       status: 'refused', request_attempted: false, usd_estimate:null };
+    let budgetTicket;
     try {
       if (!['mock', 'live'].includes(selectedMode)) fail('INVALID_MODEL_MODE');
       if (!Object.hasOwn(replies, role) || !Array.isArray(messages) || messages.length === 0
@@ -65,12 +67,15 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
           || typeof m.content !== 'string' || m.content.length > 32000)) fail('INVALID_MODEL_REQUEST');
       if(sparkOnly&&role.startsWith('wonder.'))fail('WONDER_ROUTE_DISABLED');
       const input = messages.map(m => ({ role: m.role, content: m.content }));
+      const ratedModel=ROLE_MODELS[role];
+      const forced=testInvalidWonderPlan===true&&role==='wonder.plan';
+      if(forced){record.model='muse-wonder-INVALID';record.routed_model=ratedModel;record.test_fault_injection=true;}
       if (used >= 20) fail('MODEL_CALL_LIMIT');
       used++;
       let text, reportedUsage;
       if (selectedMode === 'mock') {
         record.request_hash = hashPayload({ role, model: record.model, input });
-        if(mockFailures.includes(role))fail('META_MOCK_UNAVAILABLE');
+        if(mockFailures.includes(role)||forced)fail('META_MOCK_UNAVAILABLE');
         text = replies[role]; reportedUsage = usage(null, 'not_measured_mock');
         record.response_hash = hashPayload({ text, model: record.model, usage: reportedUsage });
       } else {
@@ -82,8 +87,12 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
           || base.username || base.password || base.search || base.hash) fail('INVALID_META_API_BASE');
         const key = env.META_API_KEY;
         if (typeof key !== 'string' || !key.trim()) fail('META_API_KEY_REQUIRED');
-        const body = { model: record.model, input, max_output_tokens: 2048, store: false, stream: false };
+        // Fault injection changes only wonder.plan's model; request limits stay identical.
+        const maxOutputTokens=2048;
+        const body = { model: record.model, input, max_output_tokens: maxOutputTokens, store: false, stream: false };
         record.request_hash = hashPayload({ role, body });
+        if(budget){budgetTicket=budget.reserve({model:ratedModel,messages:input,maxOutputTokens});
+          record.budget_ticket=budgetTicket;record.budget_reserved_usd=budget.snapshot().requests.find(r=>r.id===budgetTicket).reserved_nanos/1e9;}
         record.request_attempted = true;
         const response = await fetch(`${base.origin}/v1/responses`, { method: 'POST', redirect: 'error',
           signal: AbortSignal.timeout(30000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -96,7 +105,8 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         record.incomplete_details = {reason:diagnosticId(data?.incomplete_details?.reason,key)};
         reportedUsage = usage(data?.usage, 'provider_reported');
         record.usage = reportedUsage;
-        record.usd_estimate = estimateUsd(record.model,reportedUsage);
+        record.usd_estimate = estimateUsd(ratedModel,reportedUsage);
+        if(budgetTicket)budget.settle(budgetTicket,reportedUsage);
         record.response_hash = hashPayload(data);
         if (data?.status !== 'completed' || !responseModelMatches(record.model,data?.model)) fail('META_RESPONSE_NOT_COMPLETE');
         text = (data.output ?? []).filter(x => x.type === 'message' && x.role === 'assistant')
@@ -105,7 +115,7 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
         if (!text || text.includes(key)) fail('META_RESPONSE_REJECTED');
       }
       record.status = 'success'; record.usage = reportedUsage;
-      record.usd_estimate = estimateUsd(record.model,reportedUsage);
+      record.usd_estimate = estimateUsd(ratedModel,reportedUsage);
       record.latency_ms = Number((performance.now() - started).toFixed(3));
       calls.push(frozen(record));
       return frozen({ text, model: record.model, mode: record.mode, role,
@@ -115,10 +125,11 @@ export function createMetaRun({ runId = randomUUID(), mode, env = process.env, m
       record.latency_ms = Number((performance.now() - started).toFixed(3));
       const allowed = new Set(['INVALID_MODEL_MODE','INVALID_MODEL_REQUEST','MODEL_CALL_LIMIT',
         'SPEND_LIMIT_NOT_CONFIRMED','INVALID_META_API_BASE','INVALID_META_MODEL','META_API_KEY_REQUIRED',
-        'META_HTTP_ERROR','META_RESPONSE_NOT_COMPLETE','META_RESPONSE_REJECTED','META_MOCK_UNAVAILABLE','WONDER_ROUTE_DISABLED']);
+        'META_HTTP_ERROR','META_RESPONSE_NOT_COMPLETE','META_RESPONSE_REJECTED','META_MOCK_UNAVAILABLE','WONDER_ROUTE_DISABLED',
+        'RUN_BUDGET_EXCEEDED','RUN_BUDGET_RESERVATION_DENIED']);
       const code = allowed.has(error.code) ? error.code : 'META_CALL_FAILED';
       record.error_code = code; calls.push(frozen(record));
-      if(typeof role==='string'&&role.startsWith('wonder.')&&(record.request_attempted||['META_MOCK_UNAVAILABLE','MODEL_CALL_LIMIT'].includes(code)))activateFallback(role,code);
+      if(!code.startsWith('RUN_BUDGET_')&&typeof role==='string'&&role.startsWith('wonder.')&&(record.request_attempted||['META_MOCK_UNAVAILABLE','MODEL_CALL_LIMIT'].includes(code)))activateFallback(role,code);
       fail(code);
     }
   }

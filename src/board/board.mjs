@@ -116,6 +116,9 @@ export function buildReceipt(input={}) {
         total_tokens:c.usage?.total_tokens??null,source:c.usage?.source??unknown},
       request_attempted:c.request_attempted===true};
     if(c.error_code!==undefined)call.error_code=c.error_code;
+    if(c.test_fault_injection===true){call.test_fault_injection=true;call.routed_model=c.routed_model;}
+    if(amount(c.budget_reserved_usd))call.budget_reserved_usd=c.budget_reserved_usd;
+    if(typeof c.budget_ticket==='string'&&/^[a-f0-9-]{36}$/.test(c.budget_ticket))call.budget_ticket=c.budget_ticket;
     if(Number.isInteger(c.http_status)&&c.http_status>=100&&c.http_status<=599)call.http_status=c.http_status;
     if(object(c.response))call.response={status:diagnosticId(c.response.status),model:diagnosticId(c.response.model)};
     if(object(c.incomplete_details))call.incomplete_details={reason:diagnosticId(c.incomplete_details.reason)};

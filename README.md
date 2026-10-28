@@ -32,3 +32,5 @@ Owner rate table (USD per million tokens): Wonder input4/output20; Spark input1.
 
 Wonder provider failure, timeout, invalid structured output or host budget-guard signal activates per-run Spark-only fallback and records ROUTE_FALLBACK. The fallback plan is a labeled internal template, not a claimed Spark planning-model call. Spark draft/rewrite remain available; Wonder review is marked incomplete.
 The standard runner/smoke wire route events into Controller audit logs. External callers must supply semanticReviewCompleted=true from a completed review; missing/false reviews remain HELD, and approval/dispatch cannot bypass that boundary. Internal fallback drafts may seal without external execution. The host audit sink must be connected when using createMetaRun outside these entry points.
+
+Day 5: demo three cuts PASS/HOLD/BLOCK verified in mock; live forced-failure fallback proven (HELD/R-08, Spark $0.0046 estimate); normal live PASS not verified — budget reservation guard refused before network (see Day 5 evidence).

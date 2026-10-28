@@ -4,6 +4,8 @@ import { draft } from '../src/agents/spark.mjs';
 import * as c from '../src/run/controller.mjs';
 import { buildReceipt, renderText } from '../src/board/board.mjs';
 import { writeFileSync } from 'node:fs';
+import { hashPayload } from '../src/policy/engine.mjs';
+import { createRunBudget } from '../src/model/budget.mjs';
 
 function saveReceipt(receipt) {
   const index=process.argv.indexOf('--receipt-json');
@@ -19,29 +21,40 @@ function printCall(call) {
 }
 
 async function main() {
-  const created=c.createRun({allowedActions:['draft'],allowedRecipients:[],costCap:1});
+  const forced=process.argv.includes('--force-wonder-plan-failure'),external=process.argv.includes('--external-hold-test');
+  if(forced&&!external)throw Error('INVALID_TEST_FLAGS');
+  const budgetIndex=process.argv.indexOf('--budget-json');
+  const budget=budgetIndex<0?undefined:createRunBudget({path:process.argv[budgetIndex+1],limitUsd:0.10});
+  const bounds={allowedActions:[external?'outreach_send':'draft'],allowedRecipients:external?['demo@example.test']:[],costCap:1};
+  const created=c.createRun(bounds);
   if(!created.ok)throw Error('SMOKE_RUN_FAILED');
-  const run=created.run,models=createMetaRun({runId:run.id,onRouteEvent:e=>{
+  const run=created.run,models=createMetaRun({runId:run.id,testInvalidWonderPlan:forced,budget,onRouteEvent:e=>{
     if(!c.recordRouteFallback(run,e).ok)throw Error('ROUTE_EVENT_RECORD_FAILED');
   }});
   try {
   const proposal=await plan({goal:'Prepare demo outreach'},models);
   const body=await draft({goal:proposal.goal,plan:proposal},models);
   const advice=await review({body},models);
-  const checked=c.checkPreflight(run,{plan:proposal,payload:{action_type:'draft',body},evidence:[],
-    hasExternalAction:false,costAccumulated:0,costEstimate:0},{semanticReviewCompleted:advice.completed,
-      ...(advice.completed===false?{}:{semanticSignal:advice.signal})});
-  if(!checked.ok||checked.policy.verdict!=='PASS'||!c.seal(run).ok)throw Error('SMOKE_POLICY_FAILED');
-  const receipt=buildReceipt({snapshot:c.getRunSnapshot(run),checks:checked.policy,model_calls:models.getCalls()});
+  const payload=external?{run_id:run.id,action_type:'outreach_send',recipient:'demo@example.test',subject:'Synthetic demo',body,attachments:[],bound_inputs_hash:hashPayload(bounds)}:{action_type:'draft',body};
+  const checked=c.checkPreflight(run,{plan:proposal,payload,evidence:[],
+    hasExternalAction:external,costAccumulated:0,costEstimate:0},{semanticReviewCompleted:advice.completed,
+      ...(advice.completed===false&&!external?{}:{semanticSignal:advice.signal})});
+  if(!checked.ok||(forced?checked.state!=='HELD':checked.policy.verdict!=='PASS'))throw Error('SMOKE_POLICY_FAILED');
+  if(!external&&!c.seal(run).ok)throw Error('SMOKE_POLICY_FAILED');
+  const receipt={...buildReceipt({snapshot:c.getRunSnapshot(run),checks:checked.policy,model_calls:models.getCalls()}),
+    route_fallback_audit:c.getRunSnapshot(run).data.events.filter(e=>e.event==='ROUTE_FALLBACK')};
   saveReceipt(receipt);
   const calls=receipt.model_calls;
   console.log(`model:smoke mode=${calls[0]?.mode} real_meta_use=${calls.some(c=>c.mode==='live'&&c.status==='success')}`);
   for(const call of calls)printCall(call);
+  for(const e of receipt.route_events)console.log(`ROUTE_FALLBACK ${JSON.stringify(e)}`);
+  if(budget)console.log(`budget_accounted_usd=${budget.snapshot().accounted_usd} limit_usd=0.1`);
   console.log(`receipt model_calls=${calls.length} sections=4 state=${receipt.state}`);
   console.log(`network: ${calls.some(c=>c.request_attempted)?'ATTEMPTED':'NOT_CALLED'}`);
   if(process.argv.includes('--receipt'))console.log(renderText(receipt));
   } catch(error) {
-    const receipt=buildReceipt({snapshot:c.getRunSnapshot(run),model_calls:models.getCalls()});
+    const receipt={...buildReceipt({snapshot:c.getRunSnapshot(run),model_calls:models.getCalls()}),
+      route_fallback_audit:c.getRunSnapshot(run).data.events.filter(e=>e.event==='ROUTE_FALLBACK')};
     const known=new Set(['INVALID_MODEL_PLAN','INVALID_MODEL_DRAFT','SMOKE_POLICY_FAILED','RECEIPT_PATH_REQUIRED']);
     const code=models.getCalls().at(-1)?.error_code??(known.has(error.message)?error.message:'SMOKE_FAILED');
     try{saveReceipt(receipt);}catch{/* Do not overwrite an existing receipt or expose raw errors. */}

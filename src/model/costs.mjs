@@ -11,10 +11,11 @@ export function estimateUsd(model,usage) {
 export function summarizeCosts(calls) {
   const groups=new Map();
   for(const c of calls) {
-    if(!Object.hasOwn(MODEL_RATES,c.model))continue;
-    if(!groups.has(c.model))groups.set(c.model,{model:c.model,calls:0,input_tokens:0,output_tokens:0,usd_estimate:0,complete:true});
-    const g=groups.get(c.model);g.calls++;
-    const estimate=estimateUsd(c.model,c.usage);
+    const model=Object.hasOwn(MODEL_RATES,c.model)?c.model:Object.hasOwn(MODEL_RATES,c.routed_model)?c.routed_model:null;
+    if(model===null)continue;
+    if(!groups.has(model))groups.set(model,{model,calls:0,input_tokens:0,output_tokens:0,usd_estimate:0,complete:true});
+    const g=groups.get(model);g.calls++;
+    const estimate=estimateUsd(model,c.usage);
     if(estimate===null){g.complete=false;continue;}
     g.input_tokens+=c.usage.input_tokens;g.output_tokens+=c.usage.output_tokens;g.usd_estimate+=estimate;
   }
