@@ -1,4 +1,6 @@
-# ProofPowers — Block anything irreversible. Benefit all humanity — but first, do no harm.
+Benefit all humanity — but first, do no harm.
+
+# ProofPowers — Block anything irreversible.
 
 Replay any run. Prove any approval. Block anything irreversible.
 
@@ -40,3 +42,5 @@ Live 12/12 (Muse Wonder + Spark): full fixed-12 suite verified live, 36/36 HTTP 
 - Backup/restore: `npm run backup`; `npm run restore -- <file>` verifies audit state and approval hashes without re-arming execution.
 Day 6b: `npm run demo` / `npm run demo:without` contrast uses fake data and in-memory delivery only; no live calls.
 Set `PROOFPOWERS_STATE_ROOT` to keep state/ and backups/ outside the repo; demos do not persist, restore tests use os.tmpdir().
+
+Day 7: fixed mock suite 13 cases includes C-13 customer-note injection; npm run bench:gate writes evidence/gate-latency.json (1000 policy decisions; model calls excluded).

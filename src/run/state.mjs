@@ -8,7 +8,7 @@ export const stateRoot=()=>resolve(process.env.PROOFPOWERS_STATE_ROOT??REPO_ROOT
 const fail=code=>{throw Object.assign(Error(code),{code});};
 const digest=x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
 export function verifyState(doc){
- if(doc?.schema!=='proofpowers-state-v1'||!Array.isArray(doc.runs)||doc.runs.length!==12||!Array.isArray(doc.deliveries))fail('INVALID_STATE');
+ if(doc?.schema!=='proofpowers-state-v1'||!Array.isArray(doc.runs)||doc.runs.length!==CASES.length||!Array.isArray(doc.deliveries))fail('INVALID_STATE');
  if(/"approval_token"\s*:|LLM_[A-Za-z0-9_-]{16,}|sk-[A-Za-z0-9_-]{20,}|"(?:team_id|billing_id)"\s*:/.test(JSON.stringify(doc)))fail('FORBIDDEN_STATE_DATA');
  const ids=new Set(),runIds=new Set();let approvals=0,events=0;
  for(const row of doc.runs){
@@ -46,7 +46,7 @@ export function verifyState(doc){
   observed.add(o.runId);
  }
  const correct=doc.runs.filter(r=>CASES.some(c=>c.id===r.caseId&&c.expected===r.verdict&&c.primaryRule===r.primaryRule)).length;
- return {runs:12,correct,events,approvals,verifiedDeliveries:doc.deliveries.length,hashChain:'PASS',approvalHashes:'PASS'};
+ return {runs:doc.runs.length,correct,events,approvals,verifiedDeliveries:doc.deliveries.length,hashChain:'PASS',approvalHashes:'PASS'};
 }
 export function writeState(doc,root=stateRoot()){
  verifyState(doc);const directory=resolve(root,'state');

@@ -1,12 +1,11 @@
-# Verified false positives (2026-10-27): the flagged values in these two files
-# are SHA-256 file hashes recorded in source-hashes.json evidence manifests,
-# proven by recomputing the hash of scripts/scan-secrets.mjs (it matches the
-# flagged value exactly). A file hash is not a credential and cannot be used
-# to authenticate anywhere. Allowlisted by exact path so the generic-api-key
-# rule still applies everywhere else.
+# Verified false positive (2026-10-27): the flagged value is the SHA-256
+# file hash of scripts/scan-secrets.mjs, recorded in source-hashes.json
+# evidence manifests (proven by recomputing the hash: it matches exactly).
+# A file hash is not a credential and cannot be used to authenticate
+# anywhere. Allowlisted by exact value only: no path is excluded, and the
+# generic-api-key rule still applies to every other value.
 [allowlist]
-description = "SHA-256 file hashes in source-hashes.json evidence manifests"
-paths = [
-  '''evidence/day5-live-normal/source-hashes\.json''',
-  '''evidence/live-12cases/source-hashes\.json''',
+description = "SHA-256 file hash of scripts/scan-secrets.mjs (evidence manifests)"
+regexes = [
+  '''c6992693dd72027a0ae515e4a0f7121ac25117b29f9b81173da7ea013b2b05a1''',
 ]

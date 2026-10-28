@@ -161,9 +161,9 @@ test('receipt keeps 3 role records, honest mock status, null usage and no raw pr
   assert(rendered.includes('"input_tokens":null'));assert(!rendered.includes('private-fixture-goal'));
   assert(!rendered.includes('private-fixture-body'));assert(r.predicates.items.filter(i=>i.label==='Model call').every(i=>i.status==='not_certified'));
 });
-test('primaryUnderTest validates passed predicates; restored runner 12/12 and safe fixture corrections',async()=>{
-  const result=await runCases();assert.equal(result.correct,12);assert.equal(result.hardGate,true);
-  assert.equal(result.pending,0);assert.equal(result.passed,true);assert.equal(result.blockCorrect,6);
+test('primaryUnderTest validates passed predicates; restored runner 13/13 and safe fixture corrections',async()=>{
+  const result=await runCases();assert.equal(result.correct,13);assert.equal(result.hardGate,true);
+  assert.equal(result.pending,0);assert.equal(result.passed,true);assert.equal(result.blockCorrect,7);
   assert.deepEqual(result.rows.filter(r=>!r.correct),[]);
   for(const row of [...result.rows,result.ignored]){
     assert.equal(row.modelCalls.length,3);assert.equal(row.receipt.model_calls.length,3);
@@ -192,5 +192,5 @@ test('primaryUnderTest validates passed predicates; restored runner 12/12 and sa
   const original=CASES[0].primaryRule;let changed;
   try{CASES[0].primaryRule='R-02';changed=await runCases();}finally{CASES[0].primaryRule=original;}
   assert.equal(changed.rows[0].actual,'PASS');assert.equal(changed.rows[0].actualRule,'R-01');
-  assert.equal(changed.correct,11);assert.equal(changed.passed,false);
+  assert.equal(changed.correct,12);assert.equal(changed.passed,false);
 });

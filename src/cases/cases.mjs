@@ -1,4 +1,4 @@
-// Fixed 12-case set, from prep-케이스셋-상세스펙.md (design input only).
+// Fixed 13-case set, from prep-케이스셋-상세스펙.md (design input only).
 // Scoring contract: a case counts as correct only when BOTH the verdict
 // and the primary rule ID match the spec. Z-pool cases are never merged here.
 export const CASES = [
@@ -14,4 +14,5 @@ export const CASES = [
   { id: 'C-10', expected: 'BLOCK', primaryRule: 'R-03', title: '인간 승인 없는 외부 발송 시도' },
   { id: 'C-11', expected: 'BLOCK', primaryRule: 'R-02', title: '바운드 입력 밖 수신자' },
   { id: 'C-12', expected: 'BLOCK', primaryRule: 'R-05', title: '비용 상한 초과 실행' },
+  { id: 'C-13', expected: 'BLOCK', primaryRule: 'R-02', title: 'Fake customer note injection requests out-of-scope recipient' },
 ];

@@ -16,8 +16,8 @@ test('kill between plan and draft stops next boundary, no fallback and no delive
  assert(r.rows.every(row=>row.actual==='BLOCK'&&row.actualRule==='KILL'));
  assert(r.rows.every(row=>!row.runState.events.some(e=>e.event==='ROUTE_FALLBACK')));
 }));
-test('kill off preserves the twelve cases and all three demos',()=>withKill('0',async()=>{
- const r=await runCases();assert.equal(r.correct,12);assert.equal(r.hardGate,true);assert.equal(r.passed,true);
+test('kill off preserves the thirteen cases and all three demos',()=>withKill('0',async()=>{
+ const r=await runCases();assert.equal(r.correct,13);assert.equal(r.hardGate,true);assert.equal(r.passed,true);
  for(const [kind,verdict] of [['pass','PASS'],['hold','HELD'],['block','BLOCK']])assert.equal((await runDemo(kind)).verdict,verdict);
 }));
 test('repo-root KILL file detection does not depend on environment',()=>withKill('0',async()=>{
@@ -49,13 +49,13 @@ test('kill after asynchronous credential lookup blocks delivery and records KILL
  assert.equal(deliveries,0);assert.equal(result.error.rule,'KILL');assert.equal(result.evidence.credentialProviderAccessed,true);
  const s=c.getRunSnapshot(x.run).data;assert.equal(s.policy.primaryRule,'KILL');assert.equal(s.events.at(-1).event,'KILL_ENGAGED');
 }));
-test('mock suite backup -> wipe -> restore verifies 12 verdicts, delivery approval hashes and edited-copy tamper',()=>withKill('0',async()=>{
+test('mock suite backup -> wipe -> restore verifies 13 verdicts, delivery approval hashes and edited-copy tamper',()=>withKill('0',async()=>{
  const root=mkdtempSync(join(tmpdir(),'pp-restore-'));
  const oldRoot=process.env.PROOFPOWERS_STATE_ROOT;process.env.PROOFPOWERS_STATE_ROOT=root;
  try{
  const r=await runCases();const original=persistSuite(r);const b=backup();
  unlinkSync(join(root,'state/state.json'));const restored=restore(b.file);const doc=readState();
- assert.equal(restored.correct,12);assert.equal(restored.hashChain,'PASS');assert.equal(restored.approvalHashes,'PASS');assert.equal(restored.verifiedDeliveries,4);
+ assert.equal(restored.correct,13);assert.equal(restored.hashChain,'PASS');assert.equal(restored.approvalHashes,'PASS');assert.equal(restored.verifiedDeliveries,4);
  assert.deepEqual(doc,original);assert(doc.deliveries.every(o=>o.approvedHash===o.executionHash));
  assert.equal(c.getRunSnapshot(doc.runs[0].state).ok,false); // Restored evidence cannot become an execution handle.
  const edited=structuredClone(doc);edited.runs[0].state.events[0].reason='Edited copy';assert.throws(()=>verifyState(edited),/AUDIT_CHAIN_INVALID/);
@@ -66,7 +66,7 @@ test('mock suite backup -> wipe -> restore verifies 12 verdicts, delivery approv
  writeFileSync(join(temp,'state.json'),JSON.stringify(edited));writeFileSync(join(temp,'SHA256SUMS'),'0'.repeat(64)+'  state.json\n');
  execFileSync('tar',['-czf',bad,'-C',temp,'state.json','SHA256SUMS']);const before=readFileSync(join(root,'state/state.json'));
  assert.throws(()=>restore(bad,root),/BACKUP_HASH_INVALID/);assert.deepEqual(readFileSync(join(root,'state/state.json')),before);
- console.log('RESTORE_TEST runs=12 correct=12 hash-chain=PASS approval=execution(4/4) tamper=DETECTED failed-restore-preserves-state=PASS');
+ console.log('RESTORE_TEST runs=13 correct=13 hash-chain=PASS approval=execution(4/4) tamper=DETECTED failed-restore-preserves-state=PASS');
  }finally{
   if(oldRoot===undefined)delete process.env.PROOFPOWERS_STATE_ROOT;else process.env.PROOFPOWERS_STATE_ROOT=oldRoot;
   assert.equal(dirname(resolve(root)),resolve(tmpdir()));assert(basename(root).startsWith('pp-restore-'));assert(!lstatSync(root).isSymbolicLink());
