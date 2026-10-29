@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {mkdtempSync,readFileSync,writeFileSync,existsSync,rmSync} from 'node:fs';import {tmpdir,homedir} from 'node:os';import {join,resolve,isAbsolute} from 'node:path';import {spawnSync} from 'node:child_process';
+import {mkdtempSync,readFileSync,existsSync,rmSync} from 'node:fs';import {tmpdir,homedir} from 'node:os';import {join,resolve,isAbsolute} from 'node:path';import {spawnSync} from 'node:child_process';
 import {runCases} from '../src/cases/run.mjs';
 import {persistSuite} from '../src/run/state.mjs';
 import {REPO_ROOT} from '../src/run/kill.mjs';
@@ -74,13 +74,34 @@ test('bench:gate --out writes only to the given path',()=>{
   assert.equal(existsSync(join(root,'gate-latency.json')),false);
  }finally{cleanup(root);}
 });
-test('bench:gate --write-evidence overwrites evidence only',()=>{
+test('bench:gate --write-evidence uses a temp output and never overwrites committed evidence',()=>{
  const root=tempRoot();const before=readFileSync(evidencePath);
  try{
-  const out=run('scripts/bench-gate.mjs',['--write-evidence'],{PROOFPOWERS_STATE_ROOT:root});
+  const target=join(root,'evidence/gate-latency.json');
+  const out=run('scripts/bench-gate.mjs',['--write-evidence','--out',target],{PROOFPOWERS_STATE_ROOT:root});
   assert.equal(out.status,0);
-  const doc=JSON.parse(readFileSync(evidencePath,'utf8'));
+  const doc=JSON.parse(readFileSync(target,'utf8'));
   assert.equal(doc.schema,'proofpowers-gate-latency-v1');assert.equal(doc.runs,1000);
   assert.equal(existsSync(join(root,'gate-latency.json')),false);
- }finally{writeFileSync(evidencePath,before);cleanup(root);}
+  assert.deepEqual(readFileSync(evidencePath),before);
+ }finally{cleanup(root);}
+});
+
+
+test('bench:gate without state root writes to OS tmpdir, never repository root or committed evidence',()=>{
+ const root=tempRoot(),before=readFileSync(evidencePath);
+ try{
+  const out=run('scripts/bench-gate.mjs',[],{PROOFPOWERS_STATE_ROOT:undefined,TMP:root,TEMP:root,TMPDIR:root});
+  assert.equal(out.status,0);
+  const doc=JSON.parse(readFileSync(join(root,'proofpowers/gate-latency.json'),'utf8'));
+  assert.equal(doc.runs,1000);assert.equal(existsSync(resolve(REPO_ROOT,'gate-latency.json')),false);
+  assert.deepEqual(readFileSync(evidencePath),before);
+ }finally{cleanup(root);}
+});
+test('Windows display paths across drives never return an absolute drive path',async()=>{
+ const {win32}=await import('node:path');
+ const {relativeDisplayPath}=await import('../src/run/paths.mjs');
+ assert.equal(relativeDisplayPath('C:/repo','D:/temp/proofpowers-state.tar.gz',win32),'proofpowers-state.tar.gz');
+ assert.equal(relativeDisplayPath('C:/repo','C:/repo/backups/example.tar.gz',win32),'backups/example.tar.gz');
+ assert.equal(win32.isAbsolute(relativeDisplayPath('C:/repo','D:/temp/proofpowers-state.tar.gz',win32)),false);
 });

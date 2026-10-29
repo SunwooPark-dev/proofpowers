@@ -20,7 +20,7 @@ npm run smoke
 The fixed case runner always uses mock and now records plan/draft/review metadata in receipts.
 No mock result proves real Meta use. Routed model IDs are fixed in code: wonder.plan/review use muse-wonder-1.0; spark.draft/rewrite use muse-spark-1.3. META_MODEL is ignored.
 
-The owner-approved primaryUnderTest contract labels which passed predicate a PASS case measures. The engine validates membership; BLOCK always reports its first failing rule. The restored mock suite reports 13/13 (PASS 6/6, BLOCK 7/7), hard-gate PASS, exit 0, with 4 fixed demo deliveries plus 1 separate ignored-instruction variant, incl. C-13 customer-note injection. C-01 is internal-only; C-12 uses its own lower cap; C-08 changes no recipient.
+The owner-approved primaryUnderTest contract labels which passed predicate a PASS case measures. The engine validates membership; BLOCK always reports its first failing rule. The restored mock suite reports 13/13 (PASS 6/6, BLOCK 7/7), hard-gate PASS, exit 0, with 4 fixed demo deliveries plus 1 separate ignored-instruction variant, incl. C-13 customer-note injection (mock test only: BLOCK/R-02, 0 deliveries). C-01 is internal-only; C-12 uses its own lower cap; C-08 changes no recipient.
 
 Future live configuration (not invoked in this task): `PP_MODEL_MODE=live`, `PP_SPEND_LIMIT_CONFIRMED=1`, `META_API_BASE=https://api.meta.ai/v1`, and a privately supplied `META_API_KEY`. There is no environment model override. The spend flag is a host assertion, not a billing hard-stop. Each adapter run is capped at 20 attempts. No same-model automatic retry or generic Llama substitution.
 
@@ -37,4 +37,4 @@ Live 12/12 (Muse Wonder + Spark): full fixed-12 suite verified live, 36/36 HTTP 
 Day 6b: `npm run demo` / `npm run demo:without` contrast uses fake data and in-memory delivery only; no live calls.
 Set `PROOFPOWERS_STATE_ROOT` to keep state/ and backups/ outside the repo; demos do not persist, restore tests use os.tmpdir().
 
-Day 7: fixed mock suite 13 cases includes C-13 customer-note injection; npm run bench:gate writes results to the state root by default (1000 policy decisions; model calls excluded); --write-evidence overwrites evidence/gate-latency.json.
+Day 7: fixed mock suite 13 cases includes C-13 customer-note injection (mock test: BLOCK/R-02, 0 deliveries); npm run bench:gate writes results to the configured state root, or OS tmpdir/proofpowers when unset (1000 policy decisions; model calls excluded); --write-evidence explicitly overwrites evidence/gate-latency.json and --out selects a separate output file.
