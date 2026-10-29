@@ -49,8 +49,9 @@ Gate overhead (measured with `npm run bench:gate -- --write-evidence`, 1,000 seq
 - **The fix path is a new run, not an override.** A blocked run never gets re-armed. The good request is corrected (add the source, fix the recipient, re-approve) and goes through the full gate again.
 - **Uncertain goes to a human, not to BLOCK.** When review is unsure, the run is HELD for the operator (R-08, `npm run -s demo:hold`).
 - **Measured so far:** 0 false positives across the 6 PASS cases, both mock and live (PASS 6/6) (`evidence/live-12cases/live-output.txt`). This is a 12-case suite, not a production false-positive rate.
+- **Outside sentences (mock):** on 20 sentences written outside the case suite and labeled before the run, 7 of 10 benign ones were BLOCKED, all by R-01 because they contain a time, date, price or other number, and 7 of 10 risky ones with no digits PASSED. See [`EXTERNAL-20.md`](EXTERNAL-20.md).
 - **Recovery tooling.** `npm run backup` / `npm run restore -- <file>` restores the audit state byte for byte. Restoring checks the hash chain and approval hashes, rejects a tampered copy, and never re-arms execution (`src/run/backup.mjs`, `test/day6.test.mjs`).
-- **Not yet measured:** a false-positive rate on real traffic (none collected).
+- **Not yet measured:** a false-positive rate on real traffic (none collected), and whether a live Muse review would HOLD the risky sentences above.
 
 ## 5. Who is the real user?
 
@@ -69,7 +70,7 @@ Gate overhead (measured with `npm run bench:gate -- --write-evidence`, 1,000 seq
 
 ## 7. Was it really built in about 10 days?
 
-- **The repo history shows about 52 hours of commits, from first to last** (51 h 45 min): 16 commits, the first at 2026-10-26 11:24:27 PT (an empty "clean-room start" commit) and the last at 2026-10-28 15:09:31 PT (HEAD `67fa6ed`, pre-recording polish; the last feature commit is `722a6cf`, Day 7: C-13 injection case and gate latency bench, 2026-10-28 12:36:46 PT). The `day1-end` tag marks the Node.js skeleton at 2026-10-26 12:34 PT. Check it with `git log --reverse --date=iso`.
+- **The repo history shows about 70 hours of commits, from first to last** (69 h 44 min): 18 commits up to `80295f2` (the docs and test-script commits made after it on 2026-10-29 are not counted), the first at 2026-10-26 11:24:27 PT (an empty "clean-room start" commit) and the last at 2026-10-29 09:08:31 PT (`80295f2`, submission polish: README, this FAQ, LICENSE). The last feature commit is `722a6cf` (Day 7: C-13 injection case and gate latency bench, 2026-10-28 12:36:46 PT); `10df057` (2026-10-29 08:55:17 PT) fixed bugs only. The `day1-end` tag marks the Node.js skeleton at 2026-10-26 12:34 PT. Times are commit times. Check them with `git log --reverse --format='%h %cd' --date=iso` (plain `git log` shows author dates, and `80295f2` keeps the author date of the earlier draft it was cherry-picked from).
 - **Earlier design and research happened outside the repo:** the case spec, architecture draft and rule design (design notes kept outside this repo) and earlier agent experiments. The Meta API credits came with a 10-day development window ([Official Rules](https://cerebralvalley.ai/e/meta-ai-developer-hackathon)).
 - So "about 10 days" describes the whole project window, not the commit history. We cite the commit span as the verified number.
 
