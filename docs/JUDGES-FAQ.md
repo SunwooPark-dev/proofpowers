@@ -56,7 +56,7 @@ Gate overhead (measured with `npm run bench:gate -- --write-evidence`, 1,000 seq
 ## 5. Who is the real user?
 
 - **A solo operator running AI agents that can act:** send outreach, publish copy, spend money (`README.md`: "a solo operator's agent runs"; it does not cover enterprise compliance).
-- What they get: replay any run, prove any approval, block anything irreversible (`README.md`).
+- What they get: re-run every fixed case (`npm run cases`), prove this exact payload was approved (hash match, R-04), and every external send waits for one human yes (R-03) (`README.md`).
 - Approval is a local operator confirmation, not an identity login. The hash proves "this exact payload was confirmed", not who confirmed it (architecture design note v1.3, kept outside this repo).
 - The builder is that user. ProofPowers grew out of agent projects that drifted off course (see the demo video).
 

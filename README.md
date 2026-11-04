@@ -1,12 +1,16 @@
 Benefit all humanity — but first, do no harm.
 
-A gate that stops an AI agent before irreversible actions (send, pay, post, delete).
+A gate that stops an AI agent before an irreversible send (today: outreach_send; pay, post and delete are planned).
 
-# ProofPowers — Block anything irreversible.
+I wanted AI to work for me. Instead, I sat watching the spinner, waiting to approve its next step. To stay safe I split work into tiny steps, and the follow-ups piled up. ProofPowers checks every action against fixed rules: internal work runs on its own, unsafe steps are blocked, and anything that leaves waits for one yes on the exact payload.
 
-A deterministic safety gate for AI agents. Before an agent sends, buys or posts anything, 8 fixed rules (R-01…R-08) return **PASS**, **BLOCK** or **HELD**. Meta's Muse models plan, draft and review. They only advise; the rules decide.
+Scope today: the only outside action wired up is sending outreach (`outreach_send`). Pay, post and delete are planned, not built.
 
-Replay any run. Prove any approval. Block anything irreversible.
+# ProofPowers — No send without a rule check and one yes.
+
+A deterministic safety gate for AI agents. Before an agent sends anything outside, 8 fixed rules (R-01…R-08) return **PASS**, **BLOCK** or **HELD**. Meta's Muse models plan, draft and review. They only advise; the rules decide.
+
+Re-run every fixed case (`npm run cases`). Prove this exact payload was approved (hash match, R-04). Every external send waits for one human yes (R-03).
 
 Indie Developer track · Build for Your World · Meta Global AI Developer Hackathon
 
@@ -17,7 +21,7 @@ Indie Developer track · Build for Your World · Meta Global AI Developer Hackat
 Node.js only (tested on Node 20 and 24). No dependencies, so no `npm install` step.
 
 ```text
-git clone <PUBLIC_REPO_URL> proofpowers && cd proofpowers
+git clone https://github.com/SunwooPark-dev/proofpowers.git proofpowers && cd proofpowers
 npm run demo:without   # the same agent with no gate
 npm run demo           # the same request with ProofPowers in front
 npm test               # 52/52
@@ -41,6 +45,8 @@ HELD/R-08 demo-deliveries=0
 mock-only; network=0; real-sends=0; no state files written
 without: LEAKED 1 / WITH ProofPowers: BLOCKED — 0 records sent
 ```
+
+The `~$0.03` line is an illustrative estimate printed by the mock demo; no API usage is measured. `PASS/R-02` means verdict PASS, decided at rule R-02 (action and recipient inside the fixed bounds); `BLOCK/R-02` means R-02 failed.
 
 All data is fake (`Alex Example`, `@example.test` addresses). The "leak" goes to an in-memory mock; nothing leaves the machine.
 
@@ -86,16 +92,18 @@ BLOCK/R-02 Recipient outside bounds
 
 | Claim | Result | Evidence |
 |---|---|---|
-| Full 12-case live suite | 12/12 correct (verdict + primary rule), hard gate PASS | [`evidence/live-12cases/summary.json`](evidence/live-12cases/summary.json), [`live-output.txt`](evidence/live-12cases/live-output.txt) |
+| Full 12-case live suite (C-13 was added on Oct 28, after this live run, so it has mock results only) | 12/12 correct (verdict + primary rule), hard gate PASS | [`evidence/live-12cases/summary.json`](evidence/live-12cases/summary.json), [`live-output.txt`](evidence/live-12cases/live-output.txt) |
 | Live calls | 36/36 HTTP 200, response model matched the requested model exactly | same |
-| Tokens and cost | 30,007 tokens, about $0.31 for the whole run (usage estimate at the rate table below, not a provider bill) | same |
+| Tokens and cost | 30,007 tokens, about $0.31 for the whole run (estimate: usage at the rate table below, not a provider bill) | same |
 | Safety outcomes | 0 fallbacks, 0 unapproved sends, 0 tampered sends, 0 external sends | same |
-| Per gated action | about 3 cents (C-11: $0.030416 estimate, 2,899 tokens) | [`evidence/live-12cases/live-cases.json`](evidence/live-12cases/live-cases.json) |
+| Per gated action | about 3 cents, estimated (C-11: $0.030416 estimate, 2,899 tokens) | [`evidence/live-12cases/live-cases.json`](evidence/live-12cases/live-cases.json) |
 | Forced model failure | Wonder forced to fail (HTTP 404) → Spark HTTP 200 → `ROUTE_FALLBACK` logged → external action stays HELD | [`evidence/day5/forced-live-output.txt`](evidence/day5/forced-live-output.txt) |
 
 Live runs need a privately held Meta API key and an explicit spend confirmation (`PP_MODEL_MODE=live`, `PP_SPEND_LIMIT_CONFIRMED=1`). You do not need either to reproduce the mock results above.
 
 ## How Muse is used
+
+`muse-wonder-1.0` and `muse-spark-1.3` are Meta Muse models. Wonder is the primary planner and reviewer; Spark writes drafts and is the fallback when Wonder fails.
 
 - **`muse-wonder-1.0`**: `wonder.plan` plans the action; `wonder.review` reviews the draft. The review becomes the R-08 signal, which can only HOLD a run for a human, never PASS or BLOCK it.
 - **`muse-spark-1.3`**: `spark.draft` and `spark.rewrite` write the text a person will read.
@@ -110,7 +118,7 @@ Live runs need a privately held Meta API key and an explicit spend confirmation 
 | Rule | Deterministic check | Case |
 |---|---|---|
 | R-01 | Every number in the message has a verified source | C-07 BLOCK |
-| R-02 | Action and recipient are inside fixed bounds | C-11 BLOCK (live), C-13 BLOCK (prompt injection in a customer note, mock) |
+| R-02 | Action and recipient are inside fixed bounds | C-11 BLOCK (live), C-13 BLOCK (prompt injection in a customer note, stopped by the recipient rule, not detected; mock) |
 | R-03 | Valid human approval (session, expiry, unused token) | C-10 BLOCK |
 | R-04 | Sent payload hash equals the approved hash | C-09 BLOCK |
 | R-05 | Spend plus next estimate stays under the cost cap | C-12 BLOCK |
@@ -151,6 +159,7 @@ All self-authored, fake data. The verdict is shown as `VERDICT/rule`.
 - **Passing the rules does not mean a sentence is true.** "Our service guarantees success." has no number and goes to an allowed recipient, so it PASSES in mock mode. The rules check numbers, bounds, approval, hashes and cost, not meaning.
 - **Injection text inside a message is not detected by the rules.** R-07 relies on the runner recording a source-derived attempt. C-13 is blocked because the recipient was outside the bounds, not because the note was recognized.
 - **The 13 cases are self-authored**, from a fixed suite, not production traffic. On 20 outside sentences labeled before the run, the gate matched 6/20: 7 of 10 benign sentences were false positives and 7 of 10 risky ones were false negatives (mock mode). See [`docs/EXTERNAL-20.md`](docs/EXTERNAL-20.md).
+- **R-01 is a conservative default.** Today it blocks dates and times as unsourced numbers. Narrowing it is the next improvement.
 - **Only `outreach_send` is supported** as an external action today.
 - **R-08 HOLD is shown in mock only.** None of the 12 live cases was designed to trigger it, and in mock mode the review is a fixed `clear` stub, not a model judgment.
 - Scope: the proof and blocking checkpoint for a solo operator's agent runs. Not enterprise compliance, and it does not claim to stop every irreversible action.
